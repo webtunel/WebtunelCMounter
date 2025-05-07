@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Row, Col, List, Button, Card, Form, Input, Select, Space, Typography, Divider } from 'antd';
-import { LinkOutlined, DeleteOutlined, SaveOutlined, PlusOutlined } from '@ant-design/icons';
+import { LinkOutlined, DeleteOutlined, SaveOutlined, PlusOutlined, CloudOutlined } from '@ant-design/icons';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -260,11 +260,12 @@ const ConnectionsTab = ({
   };
 
   return (
-    <Row gutter={16} className="connection-layout">
-      <Col xs={24} sm={24} md={8} lg={6} className="connection-sidebar">
-        <Card
-          title="Saved Connections"
-          extra={
+    <div className="modern-layout">
+      {/* Connections sidebar */}
+      <div className="sidebar-column">
+        <div className="modern-card">
+          <div className="card-header">
+            <h3>Saved Connections</h3>
             <Button
               type="primary"
               icon={<PlusOutlined />}
@@ -273,266 +274,290 @@ const ConnectionsTab = ({
             >
               New
             </Button>
-          }
-          style={{ marginBottom: 16 }}
-          bodyStyle={{ padding: '12px 16px', maxHeight: '60vh', overflow: 'auto' }}
-        >
-          <List
-            dataSource={connections}
-            renderItem={connection => {
-              const typeInfo = getConnectionTypeInfo(connection.type);
-              const isMounted = isConnectionMounted(connection);
-              
-              let serverDetails = '';
-              if (connection.type === 'webdav') {
-                serverDetails = connection.url || '';
-              } else if (connection.type === 's3') {
-                serverDetails = `${connection.bucket} (${connection.region})`;
-              } else {
-                serverDetails = connection.host || '';
-                if (connection.type === 'samba' && connection.share) {
-                  serverDetails += `/${connection.share}`;
-                }
-              }
-              
-              return (
-                <List.Item
-                  className={`connection-list-item ${currentConnectionName === connection.name ? 'active' : ''}`}
-                  onClick={() => handleSelectConnection(connection.name)}
-                  actions={[
-                    isMounted ? null : 
-                    <Button 
-                      type="text" 
-                      size="small" 
-                      icon={<LinkOutlined />} 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleMountConnection(connection.name);
-                      }}
-                    />,
-                  ].filter(Boolean)}
-                >
-                  <List.Item.Meta
-                    avatar={
-                      <div className={`connection-type-icon ${typeInfo.className}`}>
+          </div>
+          <div className="card-body">
+            <ul className="connection-list">
+              {connections.length === 0 ? (
+                <li className="connection-item empty">No saved connections</li>
+              ) : (
+                connections.map(connection => {
+                  const typeInfo = getConnectionTypeInfo(connection.type);
+                  const isMounted = isConnectionMounted(connection);
+                  
+                  let serverDetails = '';
+                  if (connection.type === 'webdav') {
+                    serverDetails = connection.url || '';
+                  } else if (connection.type === 's3') {
+                    serverDetails = `${connection.bucket} (${connection.region})`;
+                  } else {
+                    serverDetails = connection.host || '';
+                    if (connection.type === 'samba' && connection.share) {
+                      serverDetails += `/${connection.share}`;
+                    }
+                  }
+                  
+                  return (
+                    <li 
+                      key={connection.name}
+                      className={`connection-item ${currentConnectionName === connection.name ? 'active' : ''}`}
+                      onClick={() => handleSelectConnection(connection.name)}
+                    >
+                      <div className={`connection-icon ${connection.type}`}>
                         {typeInfo.label}
                       </div>
-                    }
-                    title={connection.name}
-                    description={
-                      <Text type="secondary" style={{ fontSize: 12 }}>
-                        {serverDetails}
-                        {isMounted && <span className="mount-status" style={{ marginLeft: 5 }}></span>}
-                      </Text>
-                    }
-                  />
-                </List.Item>
-              );
-            }}
-            locale={{ emptyText: 'No saved connections' }}
-          />
-        </Card>
-      </Col>
+                      <div className="connection-details">
+                        <h4 className="connection-name">{connection.name}</h4>
+                        <p className="connection-url">
+                          {serverDetails}
+                          {isMounted && <span className="mount-status"></span>}
+                        </p>
+                      </div>
+                      {!isMounted && (
+                        <Button 
+                          type="text" 
+                          size="small" 
+                          icon={<LinkOutlined />} 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleMountConnection(connection.name);
+                          }}
+                        />
+                      )}
+                    </li>
+                  );
+                })
+              )}
+            </ul>
+          </div>
+        </div>
+      </div>
       
-      <Col xs={24} sm={24} md={16} lg={18} className="connection-content">
-        <Card title={isNewConnection ? "New Connection" : `Edit: ${currentConnectionName}`}>
-          <Form
-            form={form}
-            layout="vertical"
-            onFinish={handleSaveConnection}
-            initialValues={{
-              type: 'ftp',
-            }}
-          >
-            <Row gutter={16}>
-              <Col span={16}>
-                <Form.Item
-                  name="name"
-                  label="Connection Name"
-                  rules={[{ required: true, message: 'Please enter a connection name' }]}
-                >
-                  <Input />
-                </Form.Item>
-              </Col>
-              
-              <Col span={8}>
-                <Form.Item
-                  name="type"
-                  label="Connection Type"
-                  rules={[{ required: true }]}
-                >
-                  <Select onChange={handleTypeChange}>
-                    <Option value="ftp">FTP</Option>
-                    <Option value="sftp">SFTP</Option>
-                    <Option value="samba">Samba (SMB)</Option>
-                    <Option value="webdav">WebDAV</Option>
-                    <Option value="s3">Amazon S3</Option>
-                  </Select>
-                </Form.Item>
-              </Col>
-            </Row>
-            
-            <div className="form-section-title">Connection Details</div>
-            
-            {/* WebDAV-specific fields */}
-            {connectionType === 'webdav' && (
-              <Form.Item
-                name="url"
-                label="WebDAV URL"
-                rules={[{ required: true, message: 'Please enter the WebDAV URL' }]}
-              >
-                <Input placeholder="https://example.com/dav" />
-              </Form.Item>
-            )}
-            
-            {/* Host & port for non-WebDAV */}
-            {connectionType !== 'webdav' && (
-              <Row gutter={16}>
-                <Col span={16}>
-                  <Form.Item
-                    name="host"
-                    label="Host"
-                    rules={[{ required: true, message: 'Please enter the host' }]}
-                  >
-                    <Input placeholder="example.com or 192.168.1.1" />
-                  </Form.Item>
-                </Col>
-                
-                <Col span={8}>
-                  <Form.Item
-                    name="port"
-                    label="Port"
-                  >
-                    <Input
-                      type="number"
-                      placeholder={
-                        connectionType === 'ftp' ? '21' :
-                        connectionType === 'sftp' ? '22' :
-                        connectionType === 'samba' ? '445' : ''
-                      }
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-            )}
-            
-            {/* Samba-specific fields */}
-            {connectionType === 'samba' && (
-              <>
-                <Form.Item
-                  name="share"
-                  label="Share Name"
-                  rules={[{ required: true, message: 'Please enter the share name' }]}
-                >
-                  <Input placeholder="shared" />
-                </Form.Item>
-                
-                <Form.Item
-                  name="domain"
-                  label="Domain (optional)"
-                >
-                  <Input placeholder="WORKGROUP" />
-                </Form.Item>
-              </>
-            )}
-            
-            <div className="form-section-title">Authentication</div>
-            
-            <Row gutter={16}>
-              <Col span={12}>
-                <Form.Item
-                  name="username"
-                  label="Username"
-                >
-                  <Input placeholder="anonymous" />
-                </Form.Item>
-              </Col>
-              
-              <Col span={12}>
-                <Form.Item
-                  name="password"
-                  label="Password"
-                >
-                  <Input.Password />
-                </Form.Item>
-              </Col>
-            </Row>
-            
-            {/* SFTP-specific fields */}
-            {connectionType === 'sftp' && (
-              <Form.Item
-                name="privateKey"
-                label="Private Key (optional)"
-              >
-                <Input.Search
-                  readOnly
-                  enterButton="Browse..."
-                  onSearch={async () => {
-                    const file = await window.api.selectFile();
-                    if (file) {
-                      form.setFieldsValue({ privateKey: file });
-                    }
-                  }}
-                />
-              </Form.Item>
-            )}
-            
-            {/* S3-specific fields */}
-            {connectionType === 's3' && (
-              <>
-                <Row gutter={16}>
-                  <Col span={16}>
+      {/* Connection form */}
+      <div className="content-column">
+        <div className="modern-card">
+          <div className="card-header">
+            <h3>{isNewConnection ? "New Connection" : `Edit: ${currentConnectionName}`}</h3>
+          </div>
+          <div className="card-body">
+            <Form
+              form={form}
+              layout="vertical"
+              onFinish={handleSaveConnection}
+              initialValues={{
+                type: 'ftp',
+              }}
+            >
+              <div className="modern-form-section">
+                <div className="form-row">
+                  <div className="form-group" style={{ flex: 2 }}>
                     <Form.Item
-                      name="bucket"
-                      label="Bucket Name"
-                      rules={[{ required: true, message: 'Please enter the S3 bucket name' }]}
+                      name="name"
+                      label="Connection Name"
+                      rules={[{ required: true, message: 'Please enter a connection name' }]}
                     >
-                      <Input placeholder="my-bucket" />
+                      <Input className="form-control" />
                     </Form.Item>
-                  </Col>
+                  </div>
                   
-                  <Col span={8}>
+                  <div className="form-group">
                     <Form.Item
-                      name="region"
-                      label="AWS Region"
-                      rules={[{ required: true, message: 'Please enter the AWS region' }]}
+                      name="type"
+                      label="Connection Type"
+                      rules={[{ required: true }]}
                     >
-                      <Input placeholder="us-east-1" />
+                      <Select onChange={handleTypeChange} className="form-select">
+                        <Option value="ftp">FTP</Option>
+                        <Option value="sftp">SFTP</Option>
+                        <Option value="samba">Samba (SMB)</Option>
+                        <Option value="webdav">WebDAV</Option>
+                        <Option value="s3">Amazon S3</Option>
+                      </Select>
                     </Form.Item>
-                  </Col>
-                </Row>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="modern-form-section">
+                <h3 className="modern-form-title">Connection Details</h3>
                 
-                <div className="form-section-title">AWS Authentication</div>
+                {/* WebDAV-specific fields */}
+                {connectionType === 'webdav' && (
+                  <div className="form-row">
+                    <div className="form-group" style={{ width: '100%' }}>
+                      <Form.Item
+                        name="url"
+                        label="WebDAV URL"
+                        rules={[{ required: true, message: 'Please enter the WebDAV URL' }]}
+                      >
+                        <Input className="form-control" placeholder="https://example.com/dav" />
+                      </Form.Item>
+                    </div>
+                  </div>
+                )}
                 
-                <Row gutter={16}>
-                  <Col span={12}>
+                {/* Host & port for non-WebDAV */}
+                {connectionType !== 'webdav' && (
+                  <div className="form-row">
+                    <div className="form-group" style={{ flex: 2 }}>
+                      <Form.Item
+                        name="host"
+                        label="Host"
+                        rules={[{ required: true, message: 'Please enter the host' }]}
+                      >
+                        <Input className="form-control" placeholder="example.com or 192.168.1.1" />
+                      </Form.Item>
+                    </div>
+                    
+                    <div className="form-group">
+                      <Form.Item
+                        name="port"
+                        label="Port"
+                      >
+                        <Input
+                          className="form-control"
+                          type="number"
+                          placeholder={
+                            connectionType === 'ftp' ? '21' :
+                            connectionType === 'sftp' ? '22' :
+                            connectionType === 'samba' ? '445' : ''
+                          }
+                        />
+                      </Form.Item>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Samba-specific fields */}
+                {connectionType === 'samba' && (
+                  <>
+                    <div className="form-row">
+                      <div className="form-group" style={{ flex: 2 }}>
+                        <Form.Item
+                          name="share"
+                          label="Share Name"
+                          rules={[{ required: true, message: 'Please enter the share name' }]}
+                        >
+                          <Input className="form-control" placeholder="shared" />
+                        </Form.Item>
+                      </div>
+                      
+                      <div className="form-group">
+                        <Form.Item
+                          name="domain"
+                          label="Domain (optional)"
+                        >
+                          <Input className="form-control" placeholder="WORKGROUP" />
+                        </Form.Item>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+              
+              <div className="modern-form-section">
+                <h3 className="modern-form-title">Authentication</h3>
+                
+                <div className="form-row">
+                  <div className="form-group">
                     <Form.Item
-                      name="accessKeyId"
-                      label="Access Key ID"
-                      rules={[{ required: true, message: 'Please enter your Access Key ID' }]}
+                      name="username"
+                      label="Username"
                     >
-                      <Input placeholder="AKIAIOSFODNN7EXAMPLE" />
+                      <Input className="form-control" placeholder="anonymous" />
                     </Form.Item>
-                  </Col>
+                  </div>
                   
-                  <Col span={12}>
+                  <div className="form-group">
                     <Form.Item
-                      name="secretAccessKey"
-                      label="Secret Access Key"
-                      rules={[{ required: true, message: 'Please enter your Secret Access Key' }]}
+                      name="password"
+                      label="Password"
                     >
-                      <Input.Password placeholder="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY" />
+                      <Input.Password className="form-control" />
                     </Form.Item>
-                  </Col>
-                </Row>
-              </>
-            )}
-            
-            <div className="form-actions">
-              <Space>
+                  </div>
+                </div>
+                
+                {/* SFTP-specific fields */}
+                {connectionType === 'sftp' && (
+                  <div className="form-row">
+                    <div className="form-group" style={{ width: '100%' }}>
+                      <Form.Item
+                        name="privateKey"
+                        label="Private Key (optional)"
+                      >
+                        <Input.Search
+                          className="form-control"
+                          readOnly
+                          enterButton="Browse..."
+                          onSearch={async () => {
+                            const file = await window.api.selectFile();
+                            if (file) {
+                              form.setFieldsValue({ privateKey: file });
+                            }
+                          }}
+                        />
+                      </Form.Item>
+                    </div>
+                  </div>
+                )}
+                
+                {/* S3-specific fields */}
+                {connectionType === 's3' && (
+                  <>
+                    <div className="form-row">
+                      <div className="form-group" style={{ flex: 2 }}>
+                        <Form.Item
+                          name="bucket"
+                          label="Bucket Name"
+                          rules={[{ required: true, message: 'Please enter the S3 bucket name' }]}
+                        >
+                          <Input className="form-control" placeholder="my-bucket" />
+                        </Form.Item>
+                      </div>
+                      
+                      <div className="form-group">
+                        <Form.Item
+                          name="region"
+                          label="AWS Region"
+                          rules={[{ required: true, message: 'Please enter the AWS region' }]}
+                        >
+                          <Input className="form-control" placeholder="us-east-1" />
+                        </Form.Item>
+                      </div>
+                    </div>
+                    
+                    <h3 className="modern-form-title">AWS Authentication</h3>
+                    
+                    <div className="form-row">
+                      <div className="form-group">
+                        <Form.Item
+                          name="accessKeyId"
+                          label="Access Key ID"
+                          rules={[{ required: true, message: 'Please enter your Access Key ID' }]}
+                        >
+                          <Input className="form-control" placeholder="AKIAIOSFODNN7EXAMPLE" />
+                        </Form.Item>
+                      </div>
+                      
+                      <div className="form-group">
+                        <Form.Item
+                          name="secretAccessKey"
+                          label="Secret Access Key"
+                          rules={[{ required: true, message: 'Please enter your Secret Access Key' }]}
+                        >
+                          <Input.Password className="form-control" placeholder="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY" />
+                        </Form.Item>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+              
+              <div className="form-actions">
                 <Button
                   type="primary"
                   htmlType="submit"
+                  className="btn btn-primary"
                   icon={<SaveOutlined />}
                 >
                   Save Connection
@@ -542,6 +567,7 @@ const ConnectionsTab = ({
                   <>
                     <Button
                       type="primary"
+                      className="btn btn-success"
                       icon={<LinkOutlined />}
                       onClick={() => handleMountConnection()}
                       disabled={isConnectionMounted(connections.find(c => c.name === currentConnectionName))}
@@ -549,12 +575,16 @@ const ConnectionsTab = ({
                       Mount
                     </Button>
                     
-                    <Button onClick={handleNewConnection}>
+                    <Button 
+                      className="btn btn-outline"
+                      onClick={handleNewConnection}
+                    >
                       Cancel
                     </Button>
                     
                     <Button
                       danger
+                      className="btn btn-danger"
                       icon={<DeleteOutlined />}
                       onClick={handleDeleteConnection}
                     >
@@ -562,12 +592,12 @@ const ConnectionsTab = ({
                     </Button>
                   </>
                 )}
-              </Space>
-            </div>
-          </Form>
-        </Card>
-      </Col>
-    </Row>
+              </div>
+            </Form>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

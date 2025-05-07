@@ -120,29 +120,27 @@ const DebugViewer = ({ visible, onClose, className }) => {
       className={className}
       bodyStyle={{ padding: '16px 24px' }}
       footer={
-        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-          <Button key="clear" onClick={clearLogs} icon={<ClearOutlined />} danger>
+        <div className="debug-modal-footer" style={{ display: 'flex', width: '100%', justifyContent: 'flex-end', gap: '8px' }}>
+          <Button key="clear" onClick={clearLogs} icon={<ClearOutlined />} danger style={{ marginRight: 'auto' }}>
             Clear Logs
           </Button>
-          <Space>
-            <Button key="download" onClick={downloadLogs} icon={<DownloadOutlined />}>
-              Download
-            </Button>
-            <Button 
-              key="copy" 
-              onClick={copyLogs} 
-              icon={copied ? <CheckCircleOutlined /> : <CopyOutlined />}
-              style={{ color: copied ? '#28CD41' : undefined }}
-            >
-              {copied ? 'Copied' : 'Copy'}
-            </Button>
-            <Button key="refresh" onClick={fetchLogs} loading={loading} icon={<ReloadOutlined />}>
-              Refresh
-            </Button>
-            <Button key="close" type="primary" onClick={onClose}>
-              Close
-            </Button>
-          </Space>
+          <Button key="download" onClick={downloadLogs} icon={<DownloadOutlined />}>
+            Download
+          </Button>
+          <Button 
+            key="copy" 
+            onClick={copyLogs} 
+            icon={copied ? <CheckCircleOutlined /> : <CopyOutlined />}
+            style={{ color: copied ? '#28CD41' : undefined }}
+          >
+            {copied ? 'Copied' : 'Copy'}
+          </Button>
+          <Button key="refresh" onClick={fetchLogs} loading={loading} icon={<ReloadOutlined />}>
+            Refresh
+          </Button>
+          <Button key="close" type="primary" onClick={onClose}>
+            Close
+          </Button>
         </div>
       }
     >

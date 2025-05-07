@@ -7,6 +7,7 @@ import Notification from './components/Notification';
 import AppFooter from './components/AppFooter';
 import DebugViewer from './components/DebugViewer';
 import HelpSection from './components/HelpSection';
+import './styles/modern-ui.css'; // Import the new modern UI styles
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -115,12 +116,10 @@ const App = () => {
     }
   };
 
-  // Tabs configuration
-  const tabItems = [
-    {
-      key: 'connections',
-      label: 'Connections',
-      children: (
+  // Tabs content
+  const renderTabContent = () => {
+    if (activeTab === 'connections') {
+      return (
         <ConnectionsTab
           connections={connections}
           setConnections={setConnections}
@@ -131,12 +130,9 @@ const App = () => {
           switchToMountsTab={() => setActiveTab('active-mounts')}
           isLoading={isLoading}
         />
-      )
-    },
-    {
-      key: 'active-mounts',
-      label: 'Active Mounts',
-      children: (
+      );
+    } else {
+      return (
         <ActiveMountsTab
           mounts={mounts}
           loadMounts={loadMounts}
@@ -144,93 +140,83 @@ const App = () => {
           setStatusMessage={setStatusMessage}
           isLoading={isLoading}
         />
-      )
+      );
     }
-  ];
+  };
 
   return (
     <ConfigProvider
       theme={{
         algorithm: theme.defaultAlgorithm,
         token: {
-          colorPrimary: '#007AFF', // Apple blue
+          colorPrimary: '#007bff', // Primary blue color for modern UI
           borderRadius: 8,
           fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-        },
-        components: {
-          Button: {
-            controlHeight: 36,
-            paddingInline: 16,
-          },
-          Card: {
-            borderRadius: 12,
-          },
-          Table: {
-            borderRadius: 12,
-          },
-          Modal: {
-            borderRadius: 12,
-          },
         },
       }}
     >
       <Layout className="app-container">
-        {/* App Header */}
-        <Row justify="space-between" align="middle" className="app-header" wrap={false}>
-          <Col flex="1">
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <CloudOutlined style={{ fontSize: 24, color: '#007AFF', marginRight: 8 }} />
-              <Title level={4} style={{ margin: 0, fontSize: 18, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                WebtunelCMounter
-              </Title>
-            </div>
-          </Col>
-          <Col>
-            <Space size={6} align="center">
-              <Tooltip title="Refresh">
-                <Button 
-                  icon={<ReloadOutlined />} 
-                  shape="circle"
-                  onClick={handleRefresh}
-                  loading={isLoading}
-                  size="small"
-                />
-              </Tooltip>
-              <Tooltip title="Debug">
-                <Button 
-                  icon={<BugOutlined />} 
-                  shape="circle"
-                  onClick={() => setDebugModalVisible(true)}
-                  size="small"
-                />
-              </Tooltip>
-              <Tooltip title="Help">
-                <Button 
-                  icon={<QuestionCircleOutlined />} 
-                  shape="circle"
-                  type="text"
-                  onClick={() => setHelpModalVisible(true)}
-                  size="small"
-                />
-              </Tooltip>
-            </Space>
-          </Col>
-        </Row>
+        {/* Modern Header */}
+        <div className="modern-header">
+          <div className="header-logo">
+            <CloudOutlined style={{ fontSize: 24, color: '#007bff' }} />
+            <span>WebTunnelMounter</span>
+          </div>
+          <div className="header-actions">
+            <Tooltip title="Refresh">
+              <Button 
+                icon={<ReloadOutlined />} 
+                shape="circle"
+                onClick={handleRefresh}
+                loading={isLoading}
+                size="small"
+              />
+            </Tooltip>
+            <Tooltip title="Help">
+              <Button 
+                icon={<QuestionCircleOutlined />} 
+                shape="circle"
+                onClick={() => setHelpModalVisible(true)}
+                size="small"
+              />
+            </Tooltip>
+            <Tooltip title="Debug">
+              <Button 
+                icon={<BugOutlined />} 
+                shape="circle"
+                onClick={() => setDebugModalVisible(true)}
+                size="small"
+              />
+            </Tooltip>
+          </div>
+        </div>
         
-        <Content className="content-container">
-          <Tabs 
-            activeKey={activeTab} 
-            onChange={handleTabChange}
-            items={tabItems}
-            className="main-tabs"
-            size="large"
-            tabBarStyle={{ marginBottom: 16 }}
-            centered
-            tabBarGutter={8}
-          />
+        <Content className="modern-content">
+          {/* Modern Tabs */}
+          <div className="modern-tabs">
+            <div 
+              className={`modern-tab ${activeTab === 'connections' ? 'active' : ''}`}
+              onClick={() => setActiveTab('connections')}
+            >
+              Connections
+            </div>
+            <div 
+              className={`modern-tab ${activeTab === 'active-mounts' ? 'active' : ''}`}
+              onClick={() => setActiveTab('active-mounts')}
+            >
+              Active Mounts
+            </div>
+          </div>
+          
+          {/* Tab Content */}
+          {renderTabContent()}
         </Content>
         
-        <AppFooter statusMessage={statusMessage} />
+        {/* Status Footer */}
+        <div className="status-indicator">
+          <div className={`status-dot ${isLoading ? 'loading' : ''}`}></div>
+          <div className="status-text">{statusMessage}</div>
+        </div>
         
         <Notification
           visible={notification.visible}

@@ -143,26 +143,34 @@ const ActiveMountsTab = ({
   ];
 
   return (
-    <Card title="Currently Mounted Filesystems">
-      {mounts.length > 0 ? (
-        <Table
-          dataSource={mounts}
-          columns={columns}
-          rowKey="mountPoint"
-          pagination={false}
-          size="middle"
-        />
-      ) : (
-        <Empty
-          description="No active mounts"
-          image={Empty.PRESENTED_IMAGE_SIMPLE}
-        >
-          <Text type="secondary">
-            Go to Connections tab to mount a filesystem
-          </Text>
-        </Empty>
-      )}
-    </Card>
+    <div className="modern-card">
+      <div className="card-header">
+        <h3>Currently Mounted Filesystems</h3>
+      </div>
+      <div className="card-body">
+        {mounts.length > 0 ? (
+          <Table
+            dataSource={mounts}
+            columns={columns}
+            rowKey="mountPoint"
+            pagination={false}
+            size="middle"
+            className="modern-table"
+          />
+        ) : (
+          <div className="empty-state">
+            <Empty
+              description="No active mounts"
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+            >
+              <Text type="secondary">
+                Go to Connections tab to mount a filesystem
+              </Text>
+            </Empty>
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 
