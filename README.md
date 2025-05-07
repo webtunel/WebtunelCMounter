@@ -241,8 +241,30 @@ npm run dev:react
 # Build the application
 npm run build
 
+# Create a distributable DMG
+npm run dist
+
 # The packaged application will be in the dist directory
 ```
+
+#### Build Troubleshooting
+
+If you encounter code signing issues during the build process, such as errors with locale.pak files, use the following workaround:
+
+1. Build with code signing disabled:
+   ```bash
+   npm run build -- --config.mac.identity=null
+   ```
+
+2. Or modify the package.json build script to always disable code signing:
+   ```json
+   "build": "npm run build:webpack && npm run build:icons && electron-builder --dir -c electron-builder.yml --config.mac.identity=null && npm run replace:icons"
+   ```
+
+3. For distributable builds:
+   ```bash
+   npm run dist -- --config.mac.identity=null
+   ```
 
 ## Contributing
 

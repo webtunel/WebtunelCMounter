@@ -16,8 +16,8 @@
     "build:webpack": "webpack --mode production",
     "build:icons": "./createIcns.sh",
     "replace:icons": "./replaceIcons.sh",
-    "build": "npm run build:webpack && npm run build:icons && electron-builder --dir --config.npmRebuild=false && npm run replace:icons",
-    "dist": "npm run build:icons && electron-builder --config.npmRebuild=false && npm run replace:icons",
+    "build": "npm run build:webpack && npm run build:icons && electron-builder --dir -c electron-builder.yml --config.mac.identity=null && npm run replace:icons",
+    "dist": "npm run build:icons && electron-builder -c electron-builder.yml --config.mac.identity=null && npm run replace:icons",
     "postbuild": "node copyAssets.js"
   },
   "keywords": [

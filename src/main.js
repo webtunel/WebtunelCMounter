@@ -28,8 +28,8 @@ let tray = null;
 // Create the installer window
 function createInstallerWindow() {
   installerWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 900,
+    height: 700,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -53,8 +53,8 @@ function createMainWindow() {
   mainWindow = new BrowserWindow({
     width: 900,
     height: 700,
-    minWidth: 700,
-    minHeight: 500,
+    minWidth: 900,
+    minHeight: 700,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,

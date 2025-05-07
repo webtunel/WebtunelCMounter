@@ -7,7 +7,8 @@ import {
   DownloadOutlined,
   CopyOutlined, 
   InfoCircleOutlined,
-  ClockCircleOutlined
+  ClockCircleOutlined,
+  CheckCircleOutlined
 } from '@ant-design/icons';
 
 const { Text, Title } = Typography;
@@ -118,28 +119,32 @@ const DebugViewer = ({ visible, onClose, className }) => {
       width={800}
       className={className}
       bodyStyle={{ padding: '16px 24px' }}
-      footer={[
-        <Button key="clear" onClick={clearLogs} icon={<ClearOutlined />} danger>
-          Clear Logs
-        </Button>,
-        <Button key="download" onClick={downloadLogs} icon={<DownloadOutlined />}>
-          Download
-        </Button>,
-        <Button 
-          key="copy" 
-          onClick={copyLogs} 
-          icon={copied ? <CheckCircleOutlined /> : <CopyOutlined />}
-          style={{ color: copied ? '#28CD41' : undefined }}
-        >
-          {copied ? 'Copied' : 'Copy'}
-        </Button>,
-        <Button key="refresh" onClick={fetchLogs} loading={loading} icon={<ReloadOutlined />}>
-          Refresh
-        </Button>,
-        <Button key="close" type="primary" onClick={onClose}>
-          Close
-        </Button>,
-      ]}
+      footer={
+        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+          <Button key="clear" onClick={clearLogs} icon={<ClearOutlined />} danger>
+            Clear Logs
+          </Button>
+          <Space>
+            <Button key="download" onClick={downloadLogs} icon={<DownloadOutlined />}>
+              Download
+            </Button>
+            <Button 
+              key="copy" 
+              onClick={copyLogs} 
+              icon={copied ? <CheckCircleOutlined /> : <CopyOutlined />}
+              style={{ color: copied ? '#28CD41' : undefined }}
+            >
+              {copied ? 'Copied' : 'Copy'}
+            </Button>
+            <Button key="refresh" onClick={fetchLogs} loading={loading} icon={<ReloadOutlined />}>
+              Refresh
+            </Button>
+            <Button key="close" type="primary" onClick={onClose}>
+              Close
+            </Button>
+          </Space>
+        </div>
+      }
     >
       <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Space>

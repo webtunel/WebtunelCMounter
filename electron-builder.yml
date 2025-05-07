@@ -1,0 +1,17 @@
+appId: com.webtunel.webtunelcmounter
+productName: WebtunelCMounter
+mac:
+  category: public.app-category.utilities
+  target:
+    - dmg
+  darkModeSupport: true
+  icon: build-resources/icon.icns
+extraMetadata:
+  LSUIElement: 1
+extraResources:
+  - from: src/assets/icons
+    to: assets/icons
+npmRebuild: false
+nodeGypRebuild: false
+buildDependenciesFromSource: false
+afterSign: fix-signing.js
