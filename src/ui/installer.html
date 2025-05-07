@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebtunelCMounter - Installer</title>
+  <style>
+    :root {
+      --primary-color: #007bff;
+      --primary-dark: #0056b3;
+      --danger-color: #dc3545;
+      --success-color: #28a745;
+      --warning-color: #ffc107;
+      --background-color: #f8f9fa;
+      --card-background: #ffffff;
+      --border-color: #dee2e6;
+      --text-color: #212529;
+      --text-muted: #6c757d;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      line-height: 1.5;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .installer-container {
+      width: 100%;
+      max-width: 600px;
+      background-color: var(--card-background);
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 24px;
+    }
+
+    h1 {
+      font-size: 20px;
+      margin-bottom: 16px;
+      color: var(--primary-color);
+      text-align: center;
+    }
+
+    .requirements-list {
+      margin-bottom: 24px;
+    }
+
+    .requirement-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+      padding: 12px;
+      border-radius: 4px;
+      background-color: rgba(0, 0, 0, 0.03);
+    }
+
+    .requirement-status {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 16px;
+      font-weight: bold;
+      color: white;
+    }
+
+    .status-checking {
+      background-color: var(--warning-color);
+    }
+
+    .status-success {
+      background-color: var(--success-color);
+    }
+
+    .status-error {
+      background-color: var(--danger-color);
+    }
+
+    .requirement-info {
+      flex: 1;
+    }
+
+    .requirement-name {
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .requirement-description {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .action-button {
+      background-color: transparent;
+      color: var(--primary-color);
+      border: 1px solid var(--primary-color);
+      border-radius: 4px;
+      padding: 6px 12px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .action-button:hover {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .install-button {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 16px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      width: 100%;
+      margin-top: 16px;
+    }
+
+    .install-button:hover {
+      background-color: var(--primary-dark);
+    }
+
+    .install-button:disabled {
+      background-color: var(--text-muted);
+      cursor: not-allowed;
+    }
+
+    .progress-container {
+      margin-top: 24px;
+    }
+
+    .progress-title {
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .progress-bar-container {
+      height: 8px;
+      background-color: rgba(0, 0, 0, 0.05);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background-color: var(--primary-color);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .progress-log {
+      margin-top: 12px;
+      padding: 12px;
+      background-color: #f1f3f5;
+      border-radius: 4px;
+      height: 120px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="installer-container">
+    <h1>WebtunelCMounter - Requirements Installer</h1>
+
+    <div class="requirements-list">
+      <div id="macfuse-requirement" class="requirement-item">
+        <div id="macfuse-status" class="requirement-status status-checking">?</div>
+        <div class="requirement-info">
+          <div class="requirement-name">macFUSE</div>
+          <div class="requirement-description">Required for mounting FTP and SFTP filesystems</div>
+        </div>
+        <button id="macfuse-action" class="action-button" disabled>Install</button>
+      </div>
+
+      <div id="sshfs-requirement" class="requirement-item">
+        <div id="sshfs-status" class="requirement-status status-checking">?</div>
+        <div class="requirement-info">
+          <div class="requirement-name">SSHFS</div>
+          <div class="requirement-description">Required for mounting SFTP filesystems</div>
+        </div>
+        <button id="sshfs-action" class="action-button" disabled>Install</button>
+      </div>
+    </div>
+
+    <div id="progress-section" class="progress-container" style="display: none;">
+      <div class="progress-title">Installation Progress</div>
+      <div class="progress-bar-container">
+        <div id="progress-bar" class="progress-bar"></div>
+      </div>
+      <div id="progress-log" class="progress-log"></div>
+    </div>
+
+    <button id="continue-button" class="install-button" disabled>Continue</button>
+  </div>
+
+  <script>
+    // Get DOM elements
+    const macfuseStatus = document.getElementById('macfuse-status');
+    const macfuseAction = document.getElementById('macfuse-action');
+    const sshfsStatus = document.getElementById('sshfs-status');
+    const sshfsAction = document.getElementById('sshfs-action');
+    const continueButton = document.getElementById('continue-button');
+    const progressSection = document.getElementById('progress-section');
+    const progressBar = document.getElementById('progress-bar');
+    const progressLog = document.getElementById('progress-log');
+
+    // State variables
+    let macfuseInstalled = false;
+    let sshfsInstalled = false;
+    let installationInProgress = false;
+
+    // Update UI based on installation status
+    function updateUI() {
+      if (macfuseInstalled && sshfsInstalled) {
+        continueButton.disabled = false;
+        continueButton.textContent = 'Continue to WebtunelCMounter';
+      } else {
+        continueButton.disabled = installationInProgress;
+        continueButton.textContent = 'Install Missing Components';
+      }
+    }
+
+    // Add a message to the log
+    function addToLog(message) {
+      const lineElement = document.createElement('div');
+      lineElement.textContent = message;
+      progressLog.appendChild(lineElement);
+      progressLog.scrollTop = progressLog.scrollHeight;
+    }
+
+    // Show progress section
+    function showProgressSection() {
+      progressSection.style.display = 'block';
+      progressLog.innerHTML = '';
+      progressBar.style.width = '0%';
+    }
+
+    // Update progress bar
+    function updateProgress(percent) {
+      progressBar.style.width = `${percent}%`;
+    }
+
+    // Check macFUSE installation
+    async function checkMacFuse() {
+      try {
+        macfuseStatus.className = 'requirement-status status-checking';
+        macfuseStatus.textContent = '?';
+        
+        macfuseInstalled = await window.api.isMacFuseInstalled();
+        
+        if (macfuseInstalled) {
+          macfuseStatus.className = 'requirement-status status-success';
+          macfuseStatus.textContent = '✓';
+          macfuseAction.textContent = 'Installed';
+          macfuseAction.disabled = true;
+        } else {
+          macfuseStatus.className = 'requirement-status status-error';
+          macfuseStatus.textContent = '✗';
+          macfuseAction.textContent = 'Install';
+          macfuseAction.disabled = false;
+        }
+        
+        updateUI();
+      } catch (error) {
+        macfuseStatus.className = 'requirement-status status-error';
+        macfuseStatus.textContent = '!';
+        console.error('Error checking macFUSE:', error);
+      }
+    }
+
+    // Check SSHFS installation
+    async function checkSshfs() {
+      try {
+        sshfsStatus.className = 'requirement-status status-checking';
+        sshfsStatus.textContent = '?';
+        
+        sshfsInstalled = await window.api.isSshfsInstalled();
+        
+        if (sshfsInstalled) {
+          sshfsStatus.className = 'requirement-status status-success';
+          sshfsStatus.textContent = '✓';
+          sshfsAction.textContent = 'Installed';
+          sshfsAction.disabled = true;
+        } else {
+          sshfsStatus.className = 'requirement-status status-error';
+          sshfsStatus.textContent = '✗';
+          sshfsAction.textContent = 'Install';
+          sshfsAction.disabled = false;
+        }
+        
+        updateUI();
+      } catch (error) {
+        sshfsStatus.className = 'requirement-status status-error';
+        sshfsStatus.textContent = '!';
+        console.error('Error checking SSHFS:', error);
+      }
+    }
+
+    // Install macFUSE
+    async function installMacFuse() {
+      try {
+        installationInProgress = true;
+        updateUI();
+        
+        showProgressSection();
+        addToLog('Starting macFUSE installation...');
+        updateProgress(10);
+        
+        const success = await window.api.installMacFuse(message => {
+          addToLog(message);
+          // Simple progress simulation
+          updateProgress(Math.min(90, parseFloat(progressBar.style.width || '10') + 10));
+        });
+        
+        updateProgress(100);
+        
+        if (success) {
+          addToLog('macFUSE installation completed successfully!');
+          macfuseInstalled = true;
+          macfuseStatus.className = 'requirement-status status-success';
+          macfuseStatus.textContent = '✓';
+          macfuseAction.textContent = 'Installed';
+          macfuseAction.disabled = true;
+        } else {
+          addToLog('macFUSE installation failed. Please install manually.');
+        }
+        
+        installationInProgress = false;
+        updateUI();
+      } catch (error) {
+        addToLog(`Error installing macFUSE: ${error.message}`);
+        installationInProgress = false;
+        updateUI();
+      }
+    }
+
+    // Install SSHFS
+    async function installSshfs() {
+      try {
+        installationInProgress = true;
+        updateUI();
+        
+        showProgressSection();
+        addToLog('Starting SSHFS installation...');
+        updateProgress(10);
+        
+        const success = await window.api.installSshfs(message => {
+          addToLog(message);
+          // Simple progress simulation
+          updateProgress(Math.min(90, parseFloat(progressBar.style.width || '10') + 10));
+        });
+        
+        updateProgress(100);
+        
+        if (success) {
+          addToLog('SSHFS installation completed successfully!');
+          sshfsInstalled = true;
+          sshfsStatus.className = 'requirement-status status-success';
+          sshfsStatus.textContent = '✓';
+          sshfsAction.textContent = 'Installed';
+          sshfsAction.disabled = true;
+        } else {
+          addToLog('SSHFS installation failed. Please install manually.');
+        }
+        
+        installationInProgress = false;
+        updateUI();
+      } catch (error) {
+        addToLog(`Error installing SSHFS: ${error.message}`);
+        installationInProgress = false;
+        updateUI();
+      }
+    }
+
+    // Install all missing components
+    async function installAll() {
+      if (!macfuseInstalled) {
+        await installMacFuse();
+      }
+      
+      if (!sshfsInstalled) {
+        await installSshfs();
+      }
+    }
+
+    // Continue to main app
+    function continueToApp() {
+      window.api.continueToApp();
+    }
+
+    // Initialize the installer
+    async function init() {
+      await checkMacFuse();
+      await checkSshfs();
+      
+      // Add event listeners
+      macfuseAction.addEventListener('click', installMacFuse);
+      sshfsAction.addEventListener('click', installSshfs);
+      
+      continueButton.addEventListener('click', () => {
+        if (macfuseInstalled && sshfsInstalled) {
+          continueToApp();
+        } else {
+          installAll();
+        }
+      });
+    }
+
+    // Initialize when DOM is ready
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

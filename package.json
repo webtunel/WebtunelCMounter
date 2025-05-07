@@ -1,0 +1,78 @@
+{
+  "name": "webtunel-c-mounter",
+  "version": "1.0.0",
+  "description": "Mount FTP, SFTP, Samba and other protocols on macOS",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "nodemon --watch src --exec electron .",
+    "webpack": "webpack --watch",
+    "dev:react": "concurrently \"npm run webpack\" \"npm run dev\"",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:webpack": "webpack --mode production",
+    "build": "npm run build:webpack && electron-builder",
+    "postbuild": "node copyAssets.js"
+  },
+  "keywords": [
+    "macos",
+    "mount",
+    "ftp",
+    "sftp",
+    "samba",
+    "webdav",
+    "electron"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@ant-design/icons": "^6.0.0",
+    "antd": "^5.24.9",
+    "css-loader": "^7.1.2",
+    "electron-store": "^8.1.0",
+    "express": "^4.18.2",
+    "fs-extra": "^11.1.1",
+    "ftp": "^0.3.10",
+    "less": "^4.3.0",
+    "less-loader": "^12.3.0",
+    "samba-client": "^3.2.5",
+    "ssh2-sftp-client": "^9.1.0",
+    "style-loader": "^4.0.0",
+    "webdav": "^5.3.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.27.1",
+    "@babel/preset-env": "^7.27.2",
+    "@babel/preset-react": "^7.27.1",
+    "babel-loader": "^10.0.0",
+    "concurrently": "^9.1.2",
+    "electron": "^28.1.0",
+    "electron-builder": "^24.6.4",
+    "nodemon": "^3.0.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "sharp": "^0.34.1",
+    "webpack": "^5.99.8",
+    "webpack-cli": "^6.0.1"
+  },
+  "build": {
+    "appId": "com.yourname.webtunelcmounter",
+    "productName": "WebtunelCMounter",
+    "mac": {
+      "category": "public.app-category.utilities",
+      "target": [
+        "dmg"
+      ],
+      "darkModeSupport": true,
+      "icon": "src/assets/icon.png"
+    },
+    "extraMetadata": {
+      "LSUIElement": 1
+    },
+    "extraResources": [
+      {
+        "from": "src/assets/icons",
+        "to": "assets/icons"
+      }
+    ]
+  }
+}
