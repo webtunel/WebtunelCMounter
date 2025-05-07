@@ -54,6 +54,11 @@ contextBridge.exposeInMainWorld('api', {
       if (callback) callback();
     });
   },
+  onShowDebugLogs: (callback) => {
+    ipcRenderer.on('show-debug-logs', () => {
+      if (callback) callback();
+    });
+  },
   
   // Debug utilities
   getDebugLogs: () => ipcRenderer.invoke('get-debug-logs'),
@@ -68,5 +73,6 @@ contextBridge.exposeInMainWorld('api', {
   removeAllListeners: () => {
     ipcRenderer.removeAllListeners('mount-from-tray');
     ipcRenderer.removeAllListeners('show-active-mounts');
+    ipcRenderer.removeAllListeners('show-debug-logs');
   }
 });

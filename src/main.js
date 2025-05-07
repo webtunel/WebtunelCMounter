@@ -552,7 +552,9 @@ function buildTrayMenu(mountSubmenu) {
     { type: 'separator' },
     {
       label: 'Quit',
-      click: () => {
+      click: async () => {
+        // Unmount all connected drives before quitting
+        await unmountAllDrives();
         app.quit();
       }
     }
@@ -612,6 +614,37 @@ function createTray() {
     const contextMenu = buildTrayMenu(mountSubmenu);
     
     tray.setContextMenu(contextMenu);
+    
+    // Create a simple menu for clicks (not contextmenu)
+    const clickMenu = Menu.buildFromTemplate([
+      {
+        label: 'Show',
+        click: () => {
+          if (!mainWindow) {
+            createMainWindow();
+          } else {
+            if (mainWindow.isMinimized()) mainWindow.restore();
+            mainWindow.show();
+          }
+        }
+      },
+      { type: 'separator' },
+      {
+        label: 'Quit',
+        click: async () => {
+          // Unmount all connected drives before quitting
+          await unmountAllDrives();
+          app.quit();
+        }
+      }
+    ]);
+    
+    // On macOS, show simplified menu on click
+    if (process.platform === 'darwin') {
+      tray.on('click', (event, bounds) => {
+        tray.popUpContextMenu(clickMenu);
+      });
+    }
     
     // Double-click opens the app
     tray.on('double-click', () => {
@@ -691,6 +724,97 @@ function updateTrayMenu() {
 
 // App initialization
 app.whenReady().then(async () => {
+  // Set application name for menu bar
+  app.name = 'WebtunelCMounter';
+  
+  // Create application menu
+  const menuTemplate = [
+    {
+      label: 'WebtunelCMounter',
+      submenu: [
+        { role: 'about' },
+        { type: 'separator' },
+        { role: 'services' },
+        { type: 'separator' },
+        { role: 'hide' },
+        { role: 'hideothers' },
+        { role: 'unhide' },
+        { type: 'separator' },
+        { role: 'quit' }
+      ]
+    },
+    {
+      label: 'Edit',
+      submenu: [
+        { role: 'undo' },
+        { role: 'redo' },
+        { type: 'separator' },
+        { role: 'cut' },
+        { role: 'copy' },
+        { role: 'paste' },
+        { role: 'selectAll' }
+      ]
+    },
+    {
+      label: 'View',
+      submenu: [
+        { role: 'reload' },
+        { role: 'forceReload' },
+        { type: 'separator' },
+        { role: 'resetZoom' },
+        { role: 'zoomIn' },
+        { role: 'zoomOut' },
+        { type: 'separator' },
+        { role: 'togglefullscreen' }
+      ]
+    },
+    {
+      label: 'Window',
+      submenu: [
+        { role: 'minimize' },
+        { role: 'zoom' },
+        { type: 'separator' },
+        { role: 'front' },
+        { type: 'separator' },
+        { role: 'window' }
+      ]
+    },
+    {
+      label: 'Help',
+      submenu: [
+        {
+          label: 'Show Debug Logs',
+          click: () => {
+            if (mainWindow) {
+              mainWindow.webContents.send('show-debug-logs');
+            } else if (BrowserWindow.getAllWindows().length === 0) {
+              createMainWindow();
+              // Wait for window to be ready before sending the event
+              mainWindow.webContents.once('did-finish-load', () => {
+                mainWindow.webContents.send('show-debug-logs');
+              });
+            }
+          }
+        },
+        {
+          label: 'About WebtunelCMounter',
+          click: () => {
+            dialog.showMessageBox({
+              title: 'About WebtunelCMounter',
+              message: 'WebtunelCMounter',
+              detail: `Version: ${app.getVersion()}\n\nA tool for mounting cloud services on macOS`,
+              buttons: ['OK'],
+              icon: path.join(__dirname, 'assets', 'icon.png')
+            });
+          }
+        }
+      ]
+    }
+  ];
+  
+  const menu = Menu.buildFromTemplate(menuTemplate);
+  Menu.setApplicationMenu(menu);
+  
   // Set up login item based on user preference (default to true)
   const openAtLogin = store.get('openAtLogin', true);
   app.setLoginItemSettings({
@@ -729,6 +853,36 @@ app.whenReady().then(async () => {
   });
 });
 
+// Function to unmount all connected drives
+async function unmountAllDrives() {
+  try {
+    // Get all currently mounted drives
+    const mounts = await mountUtils.listMounts();
+    if (!mounts || mounts.length === 0) {
+      console.log('No mounted drives to unmount');
+      return;
+    }
+    
+    await debugUtils.log(`Unmounting all drives (${mounts.length} found)`);
+    
+    // Unmount each drive
+    for (const mount of mounts) {
+      try {
+        await debugUtils.log(`Unmounting: ${mount.mountPoint}`);
+        await mountUtils.unmount(mount.mountPoint);
+      } catch (error) {
+        await debugUtils.logError(`Failed to unmount ${mount.mountPoint}`, error);
+        console.error(`Failed to unmount ${mount.mountPoint}: ${error.message}`);
+      }
+    }
+    
+    await debugUtils.log('All drives unmounted');
+  } catch (error) {
+    await debugUtils.logError('Error in unmountAllDrives', error);
+    console.error('Error in unmountAllDrives:', error);
+  }
+}
+
 // Handle app quit
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
@@ -736,14 +890,27 @@ app.on('window-all-closed', () => {
   }
 });
 
-app.on('before-quit', () => {
-  if (apiServer) {
-    apiServer.close();
-  }
-  
-  // Destroy tray icon before quitting
-  if (tray) {
-    tray.destroy();
-    tray = null;
+app.on('before-quit', async (event) => {
+  // Prevent immediate quit to allow async operations to complete
+  if (!app.isQuitting) {
+    event.preventDefault();
+    app.isQuitting = true;
+    
+    // Unmount all connected drives
+    await unmountAllDrives();
+    
+    // Clean up resources
+    if (apiServer) {
+      apiServer.close();
+    }
+    
+    // Destroy tray icon before quitting
+    if (tray) {
+      tray.destroy();
+      tray = null;
+    }
+    
+    // Now actually quit
+    app.quit();
   }
 });

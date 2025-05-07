@@ -1,7 +1,11 @@
 {
-  "name": "webtunel-c-mounter",
+  "name": "WebtunelCMounter",
   "version": "1.0.0",
   "description": "Mount FTP, SFTP, Samba and other protocols on macOS",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/webtunel/WebtunelCMounter"
+  },
   "main": "src/main.js",
   "scripts": {
     "start": "electron .",
@@ -10,7 +14,10 @@
     "dev:react": "concurrently \"npm run webpack\" \"npm run dev\"",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:webpack": "webpack --mode production",
-    "build": "npm run build:webpack && electron-builder",
+    "build:icons": "./createIcns.sh",
+    "replace:icons": "./replaceIcons.sh",
+    "build": "npm run build:webpack && npm run build:icons && electron-builder --dir --config.npmRebuild=false && npm run replace:icons",
+    "dist": "npm run build:icons && electron-builder --config.npmRebuild=false && npm run replace:icons",
     "postbuild": "node copyAssets.js"
   },
   "keywords": [
@@ -22,7 +29,7 @@
     "webdav",
     "electron"
   ],
-  "author": "",
+  "author": "WebTunel",
   "license": "MIT",
   "dependencies": {
     "@ant-design/icons": "^6.0.0",
@@ -55,7 +62,7 @@
     "webpack-cli": "^6.0.1"
   },
   "build": {
-    "appId": "com.yourname.webtunelcmounter",
+    "appId": "com.webtunel.webtunelcmounter",
     "productName": "WebtunelCMounter",
     "mac": {
       "category": "public.app-category.utilities",
@@ -63,7 +70,7 @@
         "dmg"
       ],
       "darkModeSupport": true,
-      "icon": "src/assets/icon.png"
+      "icon": "build-resources/icon.icns"
     },
     "extraMetadata": {
       "LSUIElement": 1
@@ -73,6 +80,9 @@
         "from": "src/assets/icons",
         "to": "assets/icons"
       }
-    ]
+    ],
+    "npmRebuild": false,
+    "nodeGypRebuild": false,
+    "buildDependenciesFromSource": false
   }
 }

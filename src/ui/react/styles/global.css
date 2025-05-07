@@ -143,18 +143,19 @@ body {
 .app-header {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   height: var(--header-height);
-  background-color: rgba(255, 255, 255, 0.85);
+  background-color: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(15px) saturate(180%);
   -webkit-backdrop-filter: blur(15px) saturate(180%);
   padding: 0 var(--spacing-lg);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03), 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   z-index: var(--z-sticky);
   position: sticky;
   top: 0;
   transition: all var(--animation-speed-normal) ease;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  width: 100%;
 }
 
 .app-header::after {
@@ -215,6 +216,7 @@ body {
 /* Main tab navigation */
 .main-tabs {
   margin-top: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
   position: relative;
 }
 
@@ -225,23 +227,23 @@ body {
   left: 25%;
   width: 50%;
   height: 60px;
-  background: radial-gradient(ellipse at top, rgba(0, 122, 255, 0.08), transparent 70%);
+  background: radial-gradient(ellipse at top, rgba(0, 122, 255, 0.06), transparent 70%);
   filter: blur(20px);
   pointer-events: none;
 }
 
 .ant-tabs-nav {
   margin-bottom: var(--spacing-xl) !important;
-  background-color: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px) saturate(180%);
-  -webkit-backdrop-filter: blur(10px) saturate(180%);
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(15px) saturate(180%);
+  -webkit-backdrop-filter: blur(15px) saturate(180%);
   border-radius: var(--border-radius-lg);
-  padding: 6px 8px;
+  padding: 8px 12px;
   transition: all var(--animation-speed-normal) cubic-bezier(0.34, 1.56, 0.64, 1);
   box-shadow: 
-    0 4px 16px rgba(0, 0, 0, 0.06),
+    0 4px 16px rgba(0, 0, 0, 0.04),
     0 1px 3px rgba(0, 0, 0, 0.02);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.06);
   position: relative;
   overflow: hidden;
 }
@@ -257,8 +259,8 @@ body {
 
 .ant-tabs-nav:hover {
   box-shadow: 
-    0 8px 24px rgba(0, 0, 0, 0.09),
-    0 2px 4px rgba(0, 0, 0, 0.03);
+    0 8px 24px rgba(0, 0, 0, 0.06),
+    0 2px 4px rgba(0, 0, 0, 0.02);
   transform: translateY(-1px);
 }
 
@@ -274,27 +276,28 @@ body {
 .ant-tabs-tab {
   transition: all var(--animation-speed-normal) cubic-bezier(0.34, 1.56, 0.64, 1);
   padding: 12px 24px !important;
-  font-weight: 500;
+  font-weight: 600;
   font-size: 15px;
   letter-spacing: -0.01em;
   margin: 0 var(--spacing-xs) !important;
   position: relative;
   overflow: hidden;
   border-radius: var(--border-radius-md);
+  color: var(--text-color);
 }
 
 .ant-tabs-tab::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(0, 122, 255, 0.1), rgba(88, 86, 214, 0.1));
+  background: linear-gradient(135deg, rgba(0, 122, 255, 0.05), rgba(88, 86, 214, 0.05));
   opacity: 0;
   transition: opacity var(--animation-speed-normal) ease;
 }
 
 .ant-tabs-tab:hover {
   color: var(--primary-color) !important;
-  background-color: rgba(0, 122, 255, 0.05);
+  background-color: rgba(0, 122, 255, 0.03);
 }
 
 .ant-tabs-tab:hover::before {
@@ -302,7 +305,7 @@ body {
 }
 
 .ant-tabs-tab-active {
-  font-weight: 600 !important;
+  font-weight: 700 !important;
   color: var(--primary-color) !important;
   position: relative;
 }
@@ -317,7 +320,7 @@ body {
   height: 4px;
   border-radius: 50%;
   background-color: var(--primary-color);
-  box-shadow: 0 0 8px rgba(0, 122, 255, 0.6);
+  box-shadow: 0 0 8px rgba(0, 122, 255, 0.4);
   animation: pulse 2s infinite;
 }
 
@@ -330,7 +333,7 @@ body {
   height: 3px !important;
   border-radius: 1.5px;
   background: var(--primary-gradient) !important;
-  box-shadow: 0 0 8px rgba(0, 122, 255, 0.4);
+  box-shadow: 0 0 8px rgba(0, 122, 255, 0.3);
   bottom: 3px !important;
 }
 
@@ -590,9 +593,9 @@ body {
   border-radius: var(--border-radius-lg);
   overflow: hidden;
   box-shadow: var(--card-shadow);
-  border: 1px solid rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.05);
   transition: all var(--animation-speed-normal) cubic-bezier(0.34, 1.56, 0.64, 1);
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
@@ -600,12 +603,23 @@ body {
 .connection-content .ant-card:hover {
   box-shadow: var(--card-hover-shadow);
   transform: translateY(-2px);
-  border-color: rgba(0, 122, 255, 0.06);
+  border-color: rgba(0, 122, 255, 0.08);
 }
 
 .connection-content .ant-card-head {
-  border-bottom-color: rgba(0, 0, 0, 0.06);
+  border-bottom-color: rgba(0, 0, 0, 0.08);
   position: relative;
+  padding: 0 24px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+}
+
+.connection-content .ant-card-head-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-color);
+  padding: 0;
 }
 
 .connection-content .ant-card-head::after {
@@ -615,7 +629,11 @@ body {
   left: 10%;
   width: 80%;
   height: 1px;
-  background: linear-gradient(to right, transparent, rgba(88, 86, 214, 0.2), transparent);
+  background: linear-gradient(to right, transparent, rgba(0, 122, 255, 0.15), transparent);
+}
+
+.connection-content .ant-card-body {
+  padding: 24px;
 }
 
 .connection-list-item {
@@ -623,18 +641,19 @@ body {
   transition: all var(--animation-speed-normal) cubic-bezier(0.34, 1.56, 0.64, 1);
   border-radius: var(--border-radius-md);
   padding: var(--spacing-md);
-  margin-bottom: var(--spacing-sm);
-  border: 1px solid transparent;
+  margin-bottom: var(--spacing-md);
+  border: 1px solid rgba(0, 0, 0, 0.04);
   position: relative;
   overflow: hidden;
-  background-color: rgba(255, 255, 255, 0.6);
+  background-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
 .connection-list-item::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0));
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.2));
   opacity: 0;
   transition: opacity var(--animation-speed-normal) ease;
 }
@@ -643,7 +662,7 @@ body {
   background-color: rgba(0, 122, 255, 0.05);
   border-color: rgba(0, 122, 255, 0.15);
   transform: translateX(2px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
 }
 
 .connection-list-item:hover::before {
@@ -651,7 +670,7 @@ body {
 }
 
 .connection-list-item.active {
-  background-color: rgba(0, 122, 255, 0.1);
+  background-color: rgba(0, 122, 255, 0.08);
   border-color: rgba(0, 122, 255, 0.25);
   box-shadow: 0 3px 10px rgba(0, 122, 255, 0.1);
 }
@@ -661,11 +680,22 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-  width: 3px;
+  width: 4px;
   height: 100%;
   background: var(--primary-gradient);
   border-radius: 0 2px 2px 0;
   box-shadow: 0 0 8px rgba(0, 122, 255, 0.3);
+}
+
+.connection-list-item .ant-list-item-meta-title {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--text-color);
+  margin-bottom: 4px;
+}
+
+.connection-list-item .ant-list-item-meta-description {
+  margin-top: 2px;
 }
 
 .connection-type-icon {
@@ -674,7 +704,7 @@ body {
   justify-content: center;
   width: 42px;
   height: 42px;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   border-radius: var(--border-radius-md);
   color: white;
@@ -682,6 +712,7 @@ body {
   position: relative;
   overflow: hidden;
   transition: all var(--animation-speed-normal) cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .connection-type-icon::before {
@@ -691,13 +722,14 @@ body {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.3), transparent 70%);
+  background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.4), transparent 70%);
   opacity: 0;
   transition: opacity var(--animation-speed-normal) ease;
 }
 
 .connection-list-item:hover .connection-type-icon {
   transform: scale(1.1) rotate(3deg);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
 }
 
 .connection-list-item:hover .connection-type-icon::before {
@@ -722,6 +754,10 @@ body {
 .icon-webdav { 
   background: var(--success-gradient);
   box-shadow: 0 3px 10px rgba(52, 199, 89, 0.3);
+}
+
+.connection-list-item .ant-list-item-action {
+  margin-left: var(--spacing-md);
 }
 
 /* Mount status indicator */
@@ -931,6 +967,29 @@ body {
   opacity: 1;
 }
 
+/* Form sections with titles */
+.form-section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-color);
+  margin: var(--spacing-lg) 0 var(--spacing-md);
+  padding-bottom: var(--spacing-xs);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  position: relative;
+}
+
+.form-section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 40px;
+  height: 2px;
+  background: var(--primary-gradient);
+  border-radius: var(--border-radius-sm);
+}
+
+/* Form field labels */
 .ant-form-item-label {
   position: relative;
   overflow: hidden;
@@ -939,7 +998,7 @@ body {
 
 .ant-form-item-label > label {
   font-weight: 600;
-  color: var(--text-light);
+  color: var(--text-color);
   font-size: 14px;
   letter-spacing: -0.01em;
   position: relative;
@@ -962,7 +1021,7 @@ body {
 }
 
 .ant-form-item:hover .ant-form-item-label > label {
-  color: var(--text-color);
+  color: var(--primary-color);
   transform: translateX(2px);
 }
 
@@ -995,6 +1054,7 @@ body {
   }
 }
 
+/* Form input fields */
 .ant-input,
 .ant-input-password,
 .ant-select-selector,
@@ -1002,13 +1062,13 @@ body {
 .ant-picker {
   border-radius: var(--border-radius-md) !important;
   transition: all var(--animation-speed-normal) cubic-bezier(0.34, 1.56, 0.64, 1) !important;
-  padding: 10px 16px !important;
+  padding: 12px 16px !important;
   height: auto !important;
-  border: 1px solid rgba(0, 0, 0, 0.1) !important;
-  background-color: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid rgba(0, 0, 0, 0.15) !important;
+  background-color: rgba(255, 255, 255, 0.95) !important;
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
   font-size: 14px !important;
 }
 
@@ -1016,17 +1076,31 @@ body {
   padding: 0 !important;
   border-radius: var(--border-radius-md) !important;
   transition: all var(--animation-speed-normal) cubic-bezier(0.34, 1.56, 0.64, 1) !important;
-  border: 1px solid rgba(0, 0, 0, 0.1) !important;
-  background-color: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid rgba(0, 0, 0, 0.15) !important;
+  background-color: rgba(255, 255, 255, 0.95) !important;
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
 }
 
 .ant-input-affix-wrapper > input.ant-input {
   background-color: transparent !important;
   box-shadow: none !important;
   border: none !important;
+  padding: 12px 16px !important;
+}
+
+.ant-input-affix-wrapper .ant-input-suffix {
+  margin-right: var(--spacing-sm);
+}
+
+.ant-select-selector {
+  display: flex;
+  align-items: center;
+}
+
+.ant-select-selection-item {
+  line-height: 1.5 !important;
 }
 
 .ant-input:hover,
@@ -1036,7 +1110,7 @@ body {
 .ant-picker:hover,
 .ant-input-affix-wrapper:hover {
   border-color: var(--primary-color) !important;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.06);
   transform: translateY(-1px);
 }
 
@@ -1049,7 +1123,7 @@ body {
 .ant-picker-focused,
 .ant-input-affix-wrapper-focused {
   border-color: var(--primary-color) !important;
-  box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.15), 0 4px 8px rgba(0, 0, 0, 0.03) !important;
+  box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.2), 0 4px 8px rgba(0, 0, 0, 0.05) !important;
   transform: translateY(-2px);
   background-color: white !important;
 }
@@ -1103,6 +1177,7 @@ body {
   background: linear-gradient(to right, transparent, rgba(0, 122, 255, 0.1), transparent);
 }
 
+/* Buttons styling */
 .ant-btn {
   border-radius: var(--border-radius-md);
   height: auto;
@@ -1110,18 +1185,21 @@ body {
   transition: all var(--animation-speed-normal) cubic-bezier(0.34, 1.56, 0.64, 1);
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--spacing-sm);
   position: relative;
   overflow: hidden;
   font-weight: 500;
   font-size: 14px;
+  line-height: 1.5;
+  min-width: 100px;
 }
 
 .ant-btn::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), transparent);
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.15), transparent);
   opacity: 0;
   transition: opacity var(--animation-speed-normal) ease;
 }
@@ -1138,6 +1216,8 @@ body {
   background: var(--primary-gradient);
   border: none;
   box-shadow: 0 3px 10px rgba(0, 122, 255, 0.3);
+  color: white;
+  min-width: 120px;
 }
 
 .ant-btn-primary:hover {
@@ -1152,8 +1232,9 @@ body {
 
 .ant-btn-dangerous {
   color: var(--error-color);
-  border-color: transparent;
+  border-color: rgba(255, 59, 48, 0.2);
   background: rgba(255, 59, 48, 0.05);
+  min-width: 100px;
 }
 
 .ant-btn-dangerous:hover {
@@ -1161,6 +1242,17 @@ body {
   background: var(--error-gradient);
   border-color: transparent;
   box-shadow: 0 3px 10px rgba(255, 59, 48, 0.3);
+  transform: translateY(-2px);
+}
+
+.ant-btn-dangerous:active {
+  transform: translateY(-1px);
+}
+
+.ant-btn-default {
+  border-color: rgba(0, 0, 0, 0.15);
+  background: white;
+  color: var(--text-color);
 }
 
 .ant-btn-default:hover {
@@ -1180,6 +1272,7 @@ body {
 .ant-btn-icon-only {
   width: 36px;
   height: 36px;
+  min-width: auto;
   padding: 0;
   display: flex;
   align-items: center;
@@ -1192,6 +1285,16 @@ body {
 
 .ant-btn-icon-only:active {
   transform: translateY(-1px) scale(0.98);
+}
+
+/* Form action buttons */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-xl);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 /* Dividers */
@@ -1479,20 +1582,12 @@ body {
 
 /* Debug viewer */
 .debug-button {
-  position: fixed;
-  bottom: var(--spacing-xl);
-  right: var(--spacing-xl);
-  z-index: var(--z-fixed);
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15), 0 3px 8px rgba(0, 0, 0, 0.1);
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all var(--animation-speed-normal) cubic-bezier(0.34, 1.56, 0.64, 1);
-  background: var(--primary-gradient);
-  border: none;
   overflow: hidden;
   position: relative;
 }
@@ -1700,6 +1795,31 @@ body {
   .debug-log-container {
     max-height: 50vh;
   }
+  
+  /* Improved mobile layout */
+  .app-container {
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+  }
+  
+  .content-container {
+    padding: var(--spacing-md);
+    overflow-x: hidden;
+  }
+  
+  /* Add more spacing between form elements */
+  .ant-form-item {
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  /* Make buttons more touch-friendly */
+  .ant-btn {
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 @media (max-width: 768px) {
@@ -1733,13 +1853,6 @@ body {
   
   .ant-form-item {
     margin-bottom: var(--spacing-md);
-  }
-  
-  .debug-button {
-    bottom: var(--spacing-lg);
-    right: var(--spacing-lg);
-    width: 42px;
-    height: 42px;
   }
   
   .debug-button .anticon {
@@ -1781,6 +1894,51 @@ body {
     padding: var(--spacing-sm) !important;
     font-size: 13px;
   }
+  
+  /* Better touch targets for mobile */
+  .connection-type-icon {
+    min-width: 36px;
+    min-height: 36px;
+  }
+  
+  /* Better layout for tables on mobile */
+  .ant-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+  }
+  
+  /* Make forms more mobile-friendly */
+  .ant-form-item-control-input {
+    min-height: 40px;
+  }
+  
+  /* Improve mobile layout for connection items */
+  .connection-list-item {
+    display: flex;
+    flex-direction: column;
+    padding: var(--spacing-md);
+  }
+  
+  /* Better tap targets */
+  .ant-btn, 
+  .ant-checkbox, 
+  .ant-radio,
+  .ant-select-selector,
+  .ant-input {
+    min-height: 44px;
+  }
+  
+  /* Better spacing for modal buttons on mobile */
+  .ant-modal-footer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .ant-modal-footer button {
+    width: 100%;
+    margin: 0 !important;
+  }
 }
 
 @media (max-width: 576px) {
@@ -1810,13 +1968,6 @@ body {
   .connection-list-item {
     padding: var(--spacing-xs) var(--spacing-sm);
     margin-bottom: var(--spacing-xs);
-  }
-  
-  .debug-button {
-    bottom: var(--spacing-md);
-    right: var(--spacing-md);
-    width: 38px;
-    height: 38px;
   }
   
   .debug-button .anticon {
@@ -1861,6 +2012,65 @@ body {
   .debug-log-container {
     font-size: 11px;
     padding: var(--spacing-sm);
+  }
+  
+  /* Better mobile navigation */
+  .connection-layout {
+    flex-direction: column;
+    padding: 0;
+    margin: 0;
+  }
+  
+  /* Full width components */
+  .connection-sidebar,
+  .connection-content,
+  .ant-card {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 0 var(--spacing-md) 0;
+  }
+
+  /* Stack form layouts vertically */
+  .ant-form-item {
+    flex-direction: column;
+  }
+  
+  .ant-form-item-label {
+    text-align: left;
+    margin-bottom: var(--spacing-xs);
+  }
+  
+  /* Compact spacing */
+  .ant-form-item {
+    margin-bottom: var(--spacing-md);
+  }
+  
+  /* Fixed header and footer for better mobile experience */
+  .app-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+  }
+  
+  .app-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+  }
+  
+  .content-container {
+    margin-top: var(--header-height);
+    margin-bottom: var(--footer-height);
+    padding-bottom: var(--spacing-xl);
+  }
+  
+  /* Compact tabs for small screens */
+  .ant-tabs-nav {
+    flex-wrap: wrap;
   }
 }
 

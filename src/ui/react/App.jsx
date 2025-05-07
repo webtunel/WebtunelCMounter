@@ -6,6 +6,7 @@ import ActiveMountsTab from './components/ActiveMountsTab';
 import Notification from './components/Notification';
 import AppFooter from './components/AppFooter';
 import DebugViewer from './components/DebugViewer';
+import HelpSection from './components/HelpSection';
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -17,6 +18,7 @@ const App = () => {
   const [notification, setNotification] = useState({ visible: false, message: '', type: 'success' });
   const [statusMessage, setStatusMessage] = useState('Ready');
   const [debugModalVisible, setDebugModalVisible] = useState(false);
+  const [helpModalVisible, setHelpModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   // Load connections on mount
@@ -26,9 +28,15 @@ const App = () => {
     // Listen for resize events
     window.addEventListener('resize', handleResize);
     
+    // Listen for menu events
+    window.api.onShowDebugLogs(() => {
+      setDebugModalVisible(true);
+    });
+    
     // Clean up
     return () => {
       window.removeEventListener('resize', handleResize);
+      window.api.removeAllListeners();
     };
   }, []);
 
@@ -168,19 +176,19 @@ const App = () => {
     >
       <Layout className="app-container">
         {/* App Header */}
-        <Row justify="space-between" align="middle" style={{ padding: '12px 24px', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+        <Row justify="space-between" align="middle" className="app-header">
           <Col>
             <Space size={16}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <CloudOutlined style={{ fontSize: 24, color: '#007AFF', marginRight: 8 }} />
-                <Title level={4} style={{ margin: 0 }}>
+                <CloudOutlined style={{ fontSize: 24, color: '#007AFF', marginRight: 10 }} />
+                <Title level={4} style={{ margin: 0, fontSize: 18 }}>
                   WebtunelCMounter
                 </Title>
               </div>
             </Space>
           </Col>
           <Col>
-            <Space>
+            <Space size={8}>
               <Tooltip title="Refresh">
                 <Button 
                   icon={<ReloadOutlined />} 
@@ -189,12 +197,19 @@ const App = () => {
                   loading={isLoading}
                 />
               </Tooltip>
+              <Tooltip title="Debug">
+                <Button 
+                  icon={<BugOutlined />} 
+                  shape="circle"
+                  onClick={() => setDebugModalVisible(true)}
+                />
+              </Tooltip>
               <Tooltip title="Help">
                 <Button 
                   icon={<QuestionCircleOutlined />} 
                   shape="circle"
                   type="text"
-                  onClick={() => showNotification('Mount cloud services easily on your Mac!', 'info')}
+                  onClick={() => setHelpModalVisible(true)}
                 />
               </Tooltip>
             </Space>
@@ -209,15 +224,6 @@ const App = () => {
             className="main-tabs"
             size="large"
             tabBarStyle={{ marginBottom: 24 }}
-          />
-                
-          <Button
-            className="debug-button"
-            type="primary"
-            icon={<BugOutlined />}
-            shape="circle"
-            size="large"
-            onClick={() => setDebugModalVisible(true)}
           />
         </Content>
         
@@ -234,6 +240,11 @@ const App = () => {
           visible={debugModalVisible}
           onClose={() => setDebugModalVisible(false)}
           className="debug-modal"
+        />
+        
+        <HelpSection
+          visible={helpModalVisible}
+          onClose={() => setHelpModalVisible(false)}
         />
       </Layout>
     </ConfigProvider>

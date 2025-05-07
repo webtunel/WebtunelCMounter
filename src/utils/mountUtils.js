@@ -4,7 +4,7 @@ const path = require('path');
 const os = require('os');
 
 // Path to store mount data
-const mountsFilePath = path.join(os.homedir(), '.mac-cloud-mounter', 'mounts.json');
+const mountsFilePath = path.join(os.homedir(), '.webtunel-c-mounter', 'mounts.json');
 
 /**
  * Initialize mounts tracking file

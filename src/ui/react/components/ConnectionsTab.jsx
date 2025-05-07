@@ -240,13 +240,13 @@ const ConnectionsTab = ({
               type="primary"
               icon={<PlusOutlined />}
               onClick={handleNewConnection}
-              size="small"
+              size="middle"
             >
               New
             </Button>
           }
           style={{ marginBottom: 16 }}
-          bodyStyle={{ padding: '8px 12px', maxHeight: '60vh', overflow: 'auto' }}
+          bodyStyle={{ padding: '12px 16px', maxHeight: '60vh', overflow: 'auto' }}
         >
           <List
             dataSource={connections}
@@ -340,7 +340,7 @@ const ConnectionsTab = ({
               </Col>
             </Row>
             
-            <Divider orientation="left">Connection Details</Divider>
+            <div className="form-section-title">Connection Details</div>
             
             {/* WebDAV-specific fields */}
             {connectionType === 'webdav' && (
@@ -404,7 +404,7 @@ const ConnectionsTab = ({
               </>
             )}
             
-            <Divider orientation="left">Authentication</Divider>
+            <div className="form-section-title">Authentication</div>
             
             <Row gutter={16}>
               <Col span={12}>
@@ -445,42 +445,42 @@ const ConnectionsTab = ({
               </Form.Item>
             )}
             
-            <Form.Item className="form-actions">
-              {!isNewConnection && (
-                <Space>
-                  <Button
-                    type="primary"
-                    icon={<LinkOutlined />}
-                    onClick={() => handleMountConnection()}
-                    disabled={isConnectionMounted(connections.find(c => c.name === currentConnectionName))}
-                  >
-                    Mount
-                  </Button>
-                  
-                  <Button
-                    danger
-                    icon={<DeleteOutlined />}
-                    onClick={handleDeleteConnection}
-                  >
-                    Delete
-                  </Button>
-                </Space>
-              )}
-              
-              <Button
-                type="primary"
-                htmlType="submit"
-                icon={<SaveOutlined />}
-              >
-                Save Connection
-              </Button>
-              
-              {!isNewConnection && (
-                <Button onClick={handleNewConnection}>
-                  Cancel
+            <div className="form-actions">
+              <Space>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  icon={<SaveOutlined />}
+                >
+                  Save Connection
                 </Button>
-              )}
-            </Form.Item>
+                
+                {!isNewConnection && (
+                  <>
+                    <Button
+                      type="primary"
+                      icon={<LinkOutlined />}
+                      onClick={() => handleMountConnection()}
+                      disabled={isConnectionMounted(connections.find(c => c.name === currentConnectionName))}
+                    >
+                      Mount
+                    </Button>
+                    
+                    <Button onClick={handleNewConnection}>
+                      Cancel
+                    </Button>
+                    
+                    <Button
+                      danger
+                      icon={<DeleteOutlined />}
+                      onClick={handleDeleteConnection}
+                    >
+                      Delete
+                    </Button>
+                  </>
+                )}
+              </Space>
+            </div>
           </Form>
         </Card>
       </Col>

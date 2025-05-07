@@ -23,7 +23,7 @@
 
 ## Features
 
-WebtunelCMounter is an elegant, macOS-native application that allows you to seamlessly mount various cloud storage and network protocols as local drives. It provides a beautiful, responsive user interface with true macOS integration.
+WebtunelCMounter is an elegant, macOS application that allows you to seamlessly mount various cloud storage and network protocols as local drives. It provides a beautiful, responsive user interface with true macOS integration.
 
 ### ✨ Key Features
 
@@ -45,7 +45,7 @@ WebtunelCMounter is an elegant, macOS-native application that allows you to seam
 
 ### Download
 
-Download the latest release from the [Releases page](https://github.com/yourusername/webtunelcmounter/releases).
+Download the latest release from the [Releases page](https://github.com/webtunel/WebtunelCMounter/releases).
 
 ### Installation
 
@@ -59,8 +59,8 @@ Download the latest release from the [Releases page](https://github.com/youruser
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/yourusername/webtunel-c-mounter.git
-   cd webtunel-c-mounter
+   git clone https://github.com/webtunel/WebtunelCMounter.git
+   cd WebtunelCMounter
    ```
 
 2. Install dependencies:
@@ -205,8 +205,8 @@ curl -X GET http://localhost:3000/mounts
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/webtunelcmounter.git
-cd webtunelcmounter
+git clone https://github.com/webtunel/WebtunelCMounter.git
+cd WebtunelCMounter
 
 # Install dependencies
 npm install
@@ -278,5 +278,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 <div align="center">
   <p>Made with ❤️ for macOS users who love the cloud</p>
-  <p>© 2025 WebtunelCMounter</p>
+  <p>© 2025 WebTunel</p>
 </div>
