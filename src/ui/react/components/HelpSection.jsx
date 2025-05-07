@@ -27,6 +27,21 @@ const HelpSection = ({ visible, onClose }) => {
         </Paragraph>
 
         <Alert
+          message="Required Prerequisites"
+          description={
+            <div>
+              <p><strong>macFUSE is required</strong> for most mounting operations. If you see "macFUSE not installed but required" in the logs, please install macFUSE:</p>
+              <p>1. Download macFUSE from <a href="https://osxfuse.github.io/" target="_blank" rel="noopener noreferrer">https://osxfuse.github.io/</a></p>
+              <p>2. Install the package and restart your computer</p>
+              <p>3. Try mounting your connection again</p>
+            </div>
+          }
+          type="warning"
+          showIcon
+          style={{ marginBottom: 16 }}
+        />
+
+        <Alert
           message="Important Note"
           description="All mounted services will appear in Finder under /Volumes. You can safely disconnect them by either clicking 'Unmount' in the app or ejecting the volume in Finder."
           type="info"
@@ -256,6 +271,9 @@ const HelpSection = ({ visible, onClose }) => {
           <Panel header="Mount Fails" key="mount">
             <List>
               <List.Item>
+                <Text strong>macFUSE not installed</Text> - If you see "macFUSE not installed but required" in the logs, you need to install macFUSE from <a href="https://osxfuse.github.io/" target="_blank" rel="noopener noreferrer">https://osxfuse.github.io/</a> and restart your computer.
+              </List.Item>
+              <List.Item>
                 <Text strong>Check permissions</Text> - Make sure your account has sufficient permissions on the server.
               </List.Item>
               <List.Item>
@@ -266,6 +284,9 @@ const HelpSection = ({ visible, onClose }) => {
               </List.Item>
               <List.Item>
                 <Text strong>View logs</Text> - Click the Debug button in the app to see more detailed error information.
+              </List.Item>
+              <List.Item>
+                <Text strong>Security settings</Text> - macOS may require you to approve macFUSE in System Preferences → Security & Privacy after installation.
               </List.Item>
             </List>
           </Panel>
