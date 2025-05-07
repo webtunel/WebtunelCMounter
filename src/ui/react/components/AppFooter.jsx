@@ -42,13 +42,18 @@ const AppFooter = ({ statusMessage }) => {
           type={statusType === 'error' ? 'danger' : undefined}
           style={{ 
             color: statusType === 'loading' ? '#FF9500' : undefined,
-            fontWeight: statusType !== 'success' ? 500 : 400
+            fontWeight: statusType !== 'success' ? 500 : 400,
+            fontSize: '13px',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            maxWidth: '230px'
           }}
         >
           {statusMessage}
         </Text>
       </div>
-      <Text type="secondary" style={{ fontSize: '11px', marginTop: '4px' }}>
+      <Text type="secondary" style={{ fontSize: '10px', marginTop: '2px' }}>
         © {new Date().getFullYear()} MacCloudMounter
       </Text>
     </Footer>

@@ -176,25 +176,24 @@ const App = () => {
     >
       <Layout className="app-container">
         {/* App Header */}
-        <Row justify="space-between" align="middle" className="app-header">
-          <Col>
-            <Space size={16}>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <CloudOutlined style={{ fontSize: 24, color: '#007AFF', marginRight: 10 }} />
-                <Title level={4} style={{ margin: 0, fontSize: 18 }}>
-                  WebtunelCMounter
-                </Title>
-              </div>
-            </Space>
+        <Row justify="space-between" align="middle" className="app-header" wrap={false}>
+          <Col flex="1">
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <CloudOutlined style={{ fontSize: 24, color: '#007AFF', marginRight: 8 }} />
+              <Title level={4} style={{ margin: 0, fontSize: 18, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                WebtunelCMounter
+              </Title>
+            </div>
           </Col>
           <Col>
-            <Space size={8}>
+            <Space size={6} align="center">
               <Tooltip title="Refresh">
                 <Button 
                   icon={<ReloadOutlined />} 
                   shape="circle"
                   onClick={handleRefresh}
                   loading={isLoading}
+                  size="small"
                 />
               </Tooltip>
               <Tooltip title="Debug">
@@ -202,6 +201,7 @@ const App = () => {
                   icon={<BugOutlined />} 
                   shape="circle"
                   onClick={() => setDebugModalVisible(true)}
+                  size="small"
                 />
               </Tooltip>
               <Tooltip title="Help">
@@ -210,6 +210,7 @@ const App = () => {
                   shape="circle"
                   type="text"
                   onClick={() => setHelpModalVisible(true)}
+                  size="small"
                 />
               </Tooltip>
             </Space>
@@ -223,7 +224,9 @@ const App = () => {
             items={tabItems}
             className="main-tabs"
             size="large"
-            tabBarStyle={{ marginBottom: 24 }}
+            tabBarStyle={{ marginBottom: 16 }}
+            centered
+            tabBarGutter={8}
           />
         </Content>
         

@@ -66,6 +66,11 @@ const ConnectionsTab = ({
     // Add type-specific fields
     if (connectionData.type === 'webdav') {
       connectionData.url = values.url?.trim();
+    } else if (connectionData.type === 's3') {
+      connectionData.bucket = values.bucket?.trim();
+      connectionData.region = values.region?.trim();
+      connectionData.accessKeyId = values.accessKeyId?.trim();
+      connectionData.secretAccessKey = values.secretAccessKey;
     } else {
       connectionData.host = values.host?.trim();
       connectionData.port = values.port ? parseInt(values.port) : null;
@@ -93,6 +98,23 @@ const ConnectionsTab = ({
     if (connectionData.type === 'webdav' && !connectionData.url) {
       showNotification('WebDAV URL is required', 'error');
       return;
+    } else if (connectionData.type === 's3') {
+      if (!connectionData.bucket) {
+        showNotification('S3 bucket name is required', 'error');
+        return;
+      }
+      if (!connectionData.region) {
+        showNotification('AWS region is required', 'error');
+        return;
+      }
+      if (!connectionData.accessKeyId) {
+        showNotification('Access Key ID is required', 'error');
+        return;
+      }
+      if (!connectionData.secretAccessKey) {
+        showNotification('Secret Access Key is required', 'error');
+        return;
+      }
     } else if (connectionData.type !== 'webdav' && !connectionData.host) {
       showNotification('Host is required', 'error');
       return;
@@ -190,6 +212,9 @@ const ConnectionsTab = ({
     } else if (connection.type === 'samba') {
       // For Samba, use the share name
       mountName = connection.share || connection.host;
+    } else if (connection.type === 's3') {
+      // For S3, use the bucket name
+      mountName = `s3-${connection.bucket}`;
     } else {
       // For FTP/SFTP, use host
       mountName = connection.host;
@@ -208,7 +233,9 @@ const ConnectionsTab = ({
       mount.type === connection.type && 
       (
         (connection.type === 'webdav' && mount.url === connection.url) ||
-        (connection.type !== 'webdav' && mount.host === connection.host &&
+        (connection.type === 's3' && mount.bucket === connection.bucket) ||
+        (connection.type !== 'webdav' && connection.type !== 's3' && 
+          mount.host === connection.host &&
           (connection.type !== 'samba' || mount.share === connection.share))
       )
     );
@@ -225,6 +252,8 @@ const ConnectionsTab = ({
         return { label: 'SMB', className: 'icon-samba' };
       case 'webdav':
         return { label: 'DAV', className: 'icon-webdav' };
+      case 's3':
+        return { label: 'S3', className: 'icon-s3' };
       default:
         return { label: 'Unknown', className: '' };
     }
@@ -257,6 +286,8 @@ const ConnectionsTab = ({
               let serverDetails = '';
               if (connection.type === 'webdav') {
                 serverDetails = connection.url || '';
+              } else if (connection.type === 's3') {
+                serverDetails = `${connection.bucket} (${connection.region})`;
               } else {
                 serverDetails = connection.host || '';
                 if (connection.type === 'samba' && connection.share) {
@@ -335,6 +366,7 @@ const ConnectionsTab = ({
                     <Option value="sftp">SFTP</Option>
                     <Option value="samba">Samba (SMB)</Option>
                     <Option value="webdav">WebDAV</Option>
+                    <Option value="s3">Amazon S3</Option>
                   </Select>
                 </Form.Item>
               </Col>
@@ -443,6 +475,57 @@ const ConnectionsTab = ({
                   }}
                 />
               </Form.Item>
+            )}
+            
+            {/* S3-specific fields */}
+            {connectionType === 's3' && (
+              <>
+                <Row gutter={16}>
+                  <Col span={16}>
+                    <Form.Item
+                      name="bucket"
+                      label="Bucket Name"
+                      rules={[{ required: true, message: 'Please enter the S3 bucket name' }]}
+                    >
+                      <Input placeholder="my-bucket" />
+                    </Form.Item>
+                  </Col>
+                  
+                  <Col span={8}>
+                    <Form.Item
+                      name="region"
+                      label="AWS Region"
+                      rules={[{ required: true, message: 'Please enter the AWS region' }]}
+                    >
+                      <Input placeholder="us-east-1" />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                
+                <div className="form-section-title">AWS Authentication</div>
+                
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <Form.Item
+                      name="accessKeyId"
+                      label="Access Key ID"
+                      rules={[{ required: true, message: 'Please enter your Access Key ID' }]}
+                    >
+                      <Input placeholder="AKIAIOSFODNN7EXAMPLE" />
+                    </Form.Item>
+                  </Col>
+                  
+                  <Col span={12}>
+                    <Form.Item
+                      name="secretAccessKey"
+                      label="Secret Access Key"
+                      rules={[{ required: true, message: 'Please enter your Secret Access Key' }]}
+                    >
+                      <Input.Password placeholder="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY" />
+                    </Form.Item>
+                  </Col>
+                </Row>
+              </>
             )}
             
             <div className="form-actions">

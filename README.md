@@ -27,7 +27,7 @@ WebtunelCMounter is an elegant, macOS application that allows you to seamlessly 
 
 ### ✨ Key Features
 
-- **Multiple Protocol Support**: Mount FTP, SFTP, Samba (SMB), and WebDAV services as local drives
+- **Multiple Protocol Support**: Mount FTP, SFTP, Samba (SMB), WebDAV, and Amazon S3 services as local drives
 - **Native macOS Integration**: Appears in Finder sidebar with proper icons and volume mounting
 - **Save Connections**: Store and quickly access your favorite cloud storage locations
 - **Menu Bar Access**: Quick access to your saved cloud connections from the macOS menu bar
@@ -40,8 +40,9 @@ WebtunelCMounter is an elegant, macOS application that allows you to seamlessly 
 ### Requirements
 
 - macOS 10.14 (Mojave) or newer
-- For certain protocols (FTP, SFTP), macFUSE is required and will be installed if needed
+- For certain protocols (FTP, SFTP, S3), macFUSE is required and will be installed if needed
 - For SFTP connections specifically, SSHFS is required and will be installed if needed
+- For S3 connections, s3fs-fuse is required and will be installed if needed
 
 ### Download
 
@@ -79,7 +80,7 @@ Download the latest release from the [Releases page](https://github.com/webtunel
 
 1. Open WebtunelCMounter
 2. Click the "New" button in the Connections tab
-3. Select the connection type (FTP, SFTP, SMB, or WebDAV)
+3. Select the connection type (FTP, SFTP, SMB, WebDAV, or Amazon S3)
 4. Enter the server details and credentials
 5. Click "Save Connection"
 
@@ -117,6 +118,11 @@ Download the latest release from the [Releases page](https://github.com/webtunel
 - HTTP/HTTPS WebDAV servers
 - Cloud storage providers supporting WebDAV
 - NextCloud, ownCloud, and other compatible services
+
+### Amazon S3
+- Amazon S3 buckets
+- S3-compatible storage (MinIO, DigitalOcean Spaces, etc.)
+- Support for different AWS regions
 
 ## API Access
 
@@ -194,6 +200,20 @@ curl -X POST http://localhost:3000/unmount \
 curl -X GET http://localhost:3000/mounts
 ```
 
+### Mount Amazon S3 Bucket
+
+```bash
+curl -X POST http://localhost:3000/mount/s3 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "bucket": "my-bucket",
+    "region": "us-east-1",
+    "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+    "secretAccessKey": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+    "mountPoint": "/Volumes/MySampleS3"
+  }'
+```
+
 ## Development
 
 ### Prerequisites
@@ -241,8 +261,9 @@ Please ensure your code follows the project's coding style and includes appropri
 
 ### Common Issues
 
-1. **Cannot mount FTP/SFTP connections**
+1. **Cannot mount FTP/SFTP/S3 connections**
    - Ensure macFUSE is installed
+   - For S3 connections, verify s3fs-fuse is installed
    - Check if firewall is blocking connections
    - Verify server credentials and connection details
 
@@ -273,6 +294,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [React](https://reactjs.org/) - UI library for building component-based interfaces
 - [Ant Design](https://ant.design/) - Design system and UI component library
 - [macFUSE](https://osxfuse.github.io/) - Filesystem in Userspace for macOS
+- [s3fs-fuse](https://github.com/s3fs-fuse/s3fs-fuse) - FUSE-based file system for Amazon S3
 
 ---
 

@@ -756,6 +756,11 @@ body {
   box-shadow: 0 3px 10px rgba(52, 199, 89, 0.3);
 }
 
+.icon-s3 { 
+  background: linear-gradient(135deg, #FF9900, #FF6600);
+  box-shadow: 0 3px 10px rgba(255, 153, 0, 0.3);
+}
+
 .connection-list-item .ant-list-item-action {
   margin-left: var(--spacing-md);
 }
@@ -1836,19 +1841,25 @@ body {
   
   .content-container {
     padding: var(--spacing-sm);
+    overflow-x: hidden;
+    width: 100%;
+    box-sizing: border-box;
   }
   
   .main-tabs {
     padding: var(--spacing-sm);
   }
   
+  /* More compact tabs for smaller screens */
   .ant-tabs-tab {
     padding: 8px 12px !important;
     font-size: 14px;
+    margin: 0 2px !important;
   }
   
   .ant-tabs-nav {
     margin-bottom: var(--spacing-md) !important;
+    padding: 4px 8px;
   }
   
   .ant-form-item {
@@ -1939,6 +1950,30 @@ body {
     width: 100%;
     margin: 0 !important;
   }
+  
+  /* Improved card layouts */
+  .connection-sidebar,
+  .connection-content {
+    min-width: unset;
+    width: 100%;
+  }
+  
+  /* Make the header buttons more compact */
+  .app-header .ant-btn {
+    width: 32px;
+    height: 32px;
+    min-height: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Compact header title */
+  .app-header .ant-typography {
+    font-size: 16px;
+    white-space: nowrap;
+  }
 }
 
 @media (max-width: 576px) {
@@ -1974,9 +2009,27 @@ body {
     font-size: 18px;
   }
   
+  /* Ultra compact tabs for very small screens */
   .ant-tabs-tab {
-    padding: 6px 10px !important;
+    padding: 6px 8px !important;
     font-size: 13px;
+    margin: 0 !important;
+  }
+  
+  .ant-tabs-nav {
+    padding: 2px 4px;
+    width: 100%;
+  }
+  
+  .ant-tabs-nav-list {
+    width: 100%;
+    display: flex;
+  }
+  
+  .ant-tabs-tab {
+    flex: 1;
+    text-align: center;
+    justify-content: center;
   }
   
   .ant-form-item-label > label {
@@ -2019,6 +2072,7 @@ body {
     flex-direction: column;
     padding: 0;
     margin: 0;
+    gap: var(--spacing-md);
   }
   
   /* Full width components */
@@ -2065,12 +2119,141 @@ body {
   .content-container {
     margin-top: var(--header-height);
     margin-bottom: var(--footer-height);
-    padding-bottom: var(--spacing-xl);
+    padding-bottom: calc(var(--spacing-xl) + var(--footer-height));
+    padding-left: 4px;
+    padding-right: 4px;
   }
   
-  /* Compact tabs for small screens */
-  .ant-tabs-nav {
-    flex-wrap: wrap;
+  /* Ultra compact header for smallest screens */
+  .app-header {
+    padding: 0 8px;
+    height: var(--header-height);
+  }
+  
+  .app-header .ant-btn {
+    width: 28px;
+    height: 28px;
+    min-height: 28px;
+  }
+  
+  /* Simplify the app title for small screens */
+  .app-header .ant-typography {
+    font-size: 15px;
+  }
+  
+  /* Compact buttons and touch targets for very small screens */
+  .ant-btn {
+    min-width: 70px;
+    min-height: 36px;
+  }
+  
+  /* More compact connection cards and forms */
+  .ant-card-head {
+    min-height: 40px;
+    padding: 0 12px;
+  }
+  
+  .ant-card-head-title {
+    padding: 8px 0;
+    font-size: 15px;
+  }
+  
+  .ant-card-body {
+    padding: 12px;
+  }
+  
+  /* List items more compact */
+  .ant-list-item {
+    padding: 8px;
+  }
+  
+  /* Buttons in a row should be better spaced */
+  .ant-space {
+    gap: 4px !important;
+  }
+}
+
+/* Extra small screens (mobile portrait) */
+@media (max-width: 375px) {
+  :root {
+    --header-height: 46px;
+    --footer-height: 36px;
+    --spacing-md: 8px;
+    --spacing-sm: 4px;
+  }
+  
+  /* Minimal header for tiny screens */
+  .app-header {
+    padding: 0 6px;
+  }
+  
+  .app-header .ant-btn {
+    width: 26px;
+    height: 26px;
+    min-height: 26px;
+  }
+  
+  /* Extremely compact app title */
+  .app-header .ant-typography {
+    font-size: 14px;
+    max-width: 150px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  
+  /* Super compact cards */
+  .ant-card-body {
+    padding: 8px;
+  }
+  
+  /* Form adjustments for tiny screens */
+  .ant-form-item {
+    margin-bottom: 8px;
+  }
+  
+  /* Smaller buttons */
+  .ant-btn {
+    min-width: 60px;
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+  
+  /* Minimal spacing */
+  .ant-divider {
+    margin: 12px 0 8px;
+  }
+  
+  /* More compact footers */
+  .app-footer {
+    padding: 8px;
+    min-height: auto;
+  }
+  
+  /* Ultra compact table cells */
+  .ant-table-thead > tr > th,
+  .ant-table-tbody > tr > td {
+    padding: 4px 8px !important;
+  }
+  
+  /* Adjust tab sizing */
+  .ant-tabs-tab {
+    padding: 4px 6px !important;
+    font-size: 12px;
+  }
+  
+  /* Reduce all text sizes slightly */
+  body {
+    font-size: 13px;
+  }
+  
+  /* Ensure actions fit properly */
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .form-actions .ant-btn {
+    width: 100%;
+    margin-bottom: 4px;
   }
 }
 

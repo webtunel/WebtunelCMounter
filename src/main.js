@@ -5,6 +5,7 @@ const ftpService = require('./services/ftpService');
 const sftpService = require('./services/sftpService');
 const sambaService = require('./services/sambaService');
 const webdavService = require('./services/webdavService');
+const s3Service = require('./services/s3Service');
 const mountUtils = require('./utils/mountUtils');
 const installerUtils = require('./utils/installerUtils');
 const debugUtils = require('./utils/debugUtils');
@@ -27,7 +28,7 @@ let tray = null;
 // Create the installer window
 function createInstallerWindow() {
   installerWindow = new BrowserWindow({
-    width: 650,
+    width: 800,
     height: 600,
     webPreferences: {
       nodeIntegration: false,
@@ -171,6 +172,22 @@ function setupApiServer() {
       }
       
       const result = await webdavService.mount(url, username, password, mountPoint);
+      res.json({ success: true, mountPoint, message: result });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+  
+  // Mount S3
+  server.post('/mount/s3', async (req, res) => {
+    try {
+      const { bucket, region, accessKeyId, secretAccessKey, mountPoint } = req.body;
+      
+      if (!bucket || !region || !accessKeyId || !secretAccessKey || !mountPoint) {
+        return res.status(400).json({ error: 'Missing required parameters' });
+      }
+      
+      const result = await s3Service.mount(bucket, region, accessKeyId, secretAccessKey, mountPoint);
       res.json({ success: true, mountPoint, message: result });
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -350,7 +367,7 @@ function setupIpcHandlers() {
     
     try {
       // Check if macFUSE is installed for protocols that need it
-      if ((connection.type === 'ftp' || connection.type === 'sftp') && 
+      if ((connection.type === 'ftp' || connection.type === 'sftp' || connection.type === 's3') && 
           !(await installerUtils.isMacFuseInstalled())) {
         await debugUtils.log('macFUSE not installed but required');
         if (!installerWindow) {
@@ -372,6 +389,25 @@ function setupIpcHandlers() {
           success: false, 
           error: 'SSHFS not installed. Please install SSHFS first.' 
         };
+      }
+      
+      // Check if S3FS is installed for S3
+      if (connection.type === 's3') {
+        try {
+          const { exec } = require('child_process');
+          const util = require('util');
+          const execPromise = util.promisify(exec);
+          await execPromise('which s3fs');
+        } catch (error) {
+          await debugUtils.log('s3fs-fuse not installed but required');
+          if (!installerWindow) {
+            createInstallerWindow();
+          }
+          return {
+            success: false,
+            error: 's3fs-fuse is not installed. Please install s3fs-fuse first.'
+          };
+        }
       }
       
       await debugUtils.log(`Beginning mount operation for ${connection.type} connection`);
@@ -416,6 +452,16 @@ function setupIpcHandlers() {
             connection.url, 
             connection.username, 
             connection.password, 
+            connection.mountPoint
+          );
+          break;
+        case 's3':
+          await debugUtils.log('Mounting S3 connection');
+          result = await s3Service.mount(
+            connection.bucket,
+            connection.region,
+            connection.accessKeyId,
+            connection.secretAccessKey,
             connection.mountPoint
           );
           break;
@@ -553,9 +599,23 @@ function buildTrayMenu(mountSubmenu) {
     {
       label: 'Quit',
       click: async () => {
+        app.isQuitting = true;
         // Unmount all connected drives before quitting
         await unmountAllDrives();
-        app.quit();
+        
+        // Clean up resources
+        if (apiServer) {
+          apiServer.close();
+        }
+        
+        // Destroy tray before quitting
+        if (tray) {
+          tray.destroy();
+          tray = null;
+        }
+        
+        // Force quit the application
+        app.exit(0);
       }
     }
   ]);
@@ -632,19 +692,31 @@ function createTray() {
       {
         label: 'Quit',
         click: async () => {
+          app.isQuitting = true;
           // Unmount all connected drives before quitting
           await unmountAllDrives();
-          app.quit();
+          
+          // Clean up resources
+          if (apiServer) {
+            apiServer.close();
+          }
+          
+          // Destroy tray before quitting
+          if (tray) {
+            tray.destroy();
+            tray = null;
+          }
+          
+          // Force quit the application
+          app.exit(0);
         }
       }
     ]);
     
-    // On macOS, show simplified menu on click
-    if (process.platform === 'darwin') {
-      tray.on('click', (event, bounds) => {
-        tray.popUpContextMenu(clickMenu);
-      });
-    }
+    // Always show the simplified menu on click for macOS
+    tray.on('click', (event, bounds) => {
+      tray.popUpContextMenu(clickMenu);
+    });
     
     // Double-click opens the app
     tray.on('double-click', () => {
@@ -717,6 +789,50 @@ function updateTrayMenu() {
     const contextMenu = buildTrayMenu(mountSubmenu);
     
     tray.setContextMenu(contextMenu);
+    
+    // Re-create the simple click menu
+    const clickMenu = Menu.buildFromTemplate([
+      {
+        label: 'Show',
+        click: () => {
+          if (!mainWindow) {
+            createMainWindow();
+          } else {
+            if (mainWindow.isMinimized()) mainWindow.restore();
+            mainWindow.show();
+          }
+        }
+      },
+      { type: 'separator' },
+      {
+        label: 'Quit',
+        click: async () => {
+          app.isQuitting = true;
+          // Unmount all connected drives before quitting
+          await unmountAllDrives();
+          
+          // Clean up resources
+          if (apiServer) {
+            apiServer.close();
+          }
+          
+          // Destroy tray before quitting
+          if (tray) {
+            tray.destroy();
+            tray = null;
+          }
+          
+          // Force quit the application
+          app.exit(0);
+        }
+      }
+    ]);
+    
+    // Ensure click behavior is reset when tray menu is updated
+    tray.removeAllListeners('click');
+    tray.on('click', (event, bounds) => {
+      tray.popUpContextMenu(clickMenu);
+    });
   } catch (error) {
     console.error('Error updating tray menu:', error);
   }
@@ -886,7 +1002,9 @@ async function unmountAllDrives() {
 // Handle app quit
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
-    app.quit();
+    app.isQuitting = true;
+    // Force exit to ensure the app quits completely
+    app.exit(0);
   }
 });
 
@@ -910,7 +1028,7 @@ app.on('before-quit', async (event) => {
       tray = null;
     }
     
-    // Now actually quit
-    app.quit();
+    // Now actually quit with force exit to ensure complete termination
+    app.exit(0);
   }
 });
